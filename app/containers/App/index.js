@@ -14,12 +14,18 @@ import HomePage from 'containers/HomePage/Loadable';
 import NotFoundPage from 'containers/NotFoundPage/Loadable';
 
 import GlobalStyle from '../../global-styles';
+import CalculatePage from '../CalculatePage';
+import GenerateQr from '../GenerateQr';
+import ValidateQr from '../ValidateQr';
 
 export default function App() {
   return (
     <div>
       <Switch>
         <Route exact path="/" component={HomePage} />
+        <Route exact path="/calculadora" component={CalculatePage} />
+        <Route exact path="/generar" component={GenerateQr} />
+        <Route exact path="/validar" component={ValidateQr} />
         <Route component={NotFoundPage} />
       </Switch>
       <GlobalStyle />
