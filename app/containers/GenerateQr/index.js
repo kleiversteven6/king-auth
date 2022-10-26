@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Card, Image } from 'semantic-ui-react';
+import { Button, Card, Container, Image } from 'semantic-ui-react';
 
 export default function GenerateQr() {
   const [Response, setResponse] = useState({
@@ -13,15 +13,17 @@ export default function GenerateQr() {
       .then(data => setResponse(data));
   };
   return (
-    <Card>
-      <Image src={Response.url} wrapped ui={false} />
-      <Card.Content>
-        <Card.Header>King-auth</Card.Header>
-        <Card.Description>{Response.secret}</Card.Description>
-      </Card.Content>
-      <Card.Content extra>
-        <Button onClick={generate}>Generar QR</Button>
-      </Card.Content>
-    </Card>
+    <Container>
+      <Card color="blue" centered="true">
+        <Image src={Response.url} wrapped ui={false} />
+        <Card.Content>
+          <Card.Header>King-auth</Card.Header>
+          <Card.Description>{Response.secret}</Card.Description>
+        </Card.Content>
+        <Card.Content textAlign="center">
+          <Button onClick={generate}>Generar QR</Button>
+        </Card.Content>
+      </Card>
+    </Container>
   );
 }

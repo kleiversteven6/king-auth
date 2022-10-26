@@ -10,10 +10,6 @@ import React, { useState, useEffect } from 'react';
 import image from 'images/ciberseguridad.png';
 
 export default function ValidateQr() {
-  const [Response, setResponse] = useState({
-    response: '',
-    code: '',
-  });
   const [Secret, setSecret] = useState('');
   const [Code, setCode] = useState('');
   const [content, setContent] = useState('');
@@ -23,8 +19,7 @@ export default function ValidateQr() {
     )
       .then(result => result.json())
       .then(data => {
-        setResponse(data);
-        if (Response.response === 'false') {
+        if (data.response === 'false') {
           setContent(<Message color="red">Autenticación Errónea</Message>);
         } else {
           setContent(<Message color="green">Autenticación Exitosa</Message>);
