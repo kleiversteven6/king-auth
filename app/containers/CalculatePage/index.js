@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import { random } from 'lodash';
+import React, { useEffect, useState } from 'react';
 import {
   Button,
+  Container,
   Divider,
   Form,
   Grid,
   GridColumn,
+  Icon,
   Input,
   Segment,
   Table,
@@ -14,8 +17,7 @@ export default function CalculatePage() {
   const [bet, setBet] = useState('');
   const [dummy, setDummy] = useState('');
   const [format, setFormat] = useState('d');
-
-  const q = [
+  const [quotes, setQuotes] = useState([
     {
       id: 1,
       logro: '',
@@ -23,9 +25,17 @@ export default function CalculatePage() {
       fraccionario: 0,
       decimal: 0,
     },
-  ];
+  ]);
 
-  const [quotes, setQuotes] = useState(q);
+  const [stats, setStats] = useState({
+    dec: 0,
+    ame: 0,
+    fra: 0,
+    ganancia: 0,
+    total: 0,
+  });
+
+  let cont = 0;
 
   const toFrac = n => {
     let x = 1;
@@ -122,10 +132,12 @@ export default function CalculatePage() {
   };
 
   const addQuote = () => {
+    const d = new Date();
+
     setQuotes([
       ...quotes,
       {
-        id: quotes.length + 1,
+        id: `${quotes.length} ${random()} ${d.getMilliseconds()}`,
         logro: '',
         americano: 0,
         fraccionario: 0,
@@ -140,13 +152,18 @@ export default function CalculatePage() {
 
   const editQuote = (id, e) => {
     setDummy(e);
+
     const foundQuote = quotes.find(quote => quote.id === id);
     foundQuote.logro = e;
+
+    foundQuote.decimal = 0;
+    foundQuote.americano = 0;
+    foundQuote.fraccionario = '0/0';
 
     if (foundQuote) {
       switch (format) {
         case 'd': {
-          if (dummy > 1) {
+          if (e > 1) {
             foundQuote.decimal = e;
             foundQuote.americano = toGring(e);
             foundQuote.fraccionario = toFrac(e);
@@ -208,80 +225,210 @@ export default function CalculatePage() {
     }
   };
 
+  const runCont = () => {
+    cont += 1;
+    return cont;
+  };
+
+  useEffect(() => {
+    let d = 1;
+    let a = 0;
+    let f = '0/0';
+    let t = 0;
+
+    for (let k = 0; k < quotes.length; k += 1) {
+      d *= quotes[k].decimal;
+    }
+
+    if (d > 1) {
+      a = toGring(d);
+      f = toFrac(d);
+      t = d * bet;
+    }
+
+    setStats({
+      dec: d.toFixed(2),
+      ame: a,
+      fra: f,
+      ganancia: Math.round(t - (d > 1 ? bet : 0)),
+      total: Math.round(t),
+    });
+  }, [dummy, quotes]);
+
   return (
     <>
-      <h1>Calculadora en HD</h1>
-      <Segment placeholder>
-        <Grid columns={2} relaxed="very" stackable>
-          <Grid.Column>
-            <Form style={{ textAlign: 'center' }}>
-              Formato
-              <select
-                id={0}
-                defaultValue="d"
-                onChange={e => setFormat(e.target.value)}
-              >
-                <option value="d">Decimal</option>
-                <option value="a">Americano</option>
-                <option value="f">Fraccion</option>
-              </select>
-              Apuesta
-              <Form.Input
-                type="number"
-                value={bet}
-                onChange={e => setBet(e.target.value)}
-              />
-            </Form>
-          </Grid.Column>
-
-          <GridColumn />
-        </Grid>
-        <Divider vertical />
-      </Segment>
-
-      <Grid>
-        <Grid.Row>
-          <GridColumn>
-            <Table>
-              <Table.Header>
-                <Table.Row>
-                  <Table.Cell>ID</Table.Cell>
-                  <Table.Cell>Cuota</Table.Cell>
-                  <Table.Cell>Decimal</Table.Cell>
-                  <Table.Cell>Americano</Table.Cell>
-                  <Table.Cell>Fraccionado</Table.Cell>
-                  <Table.Cell
-                    content={<Button icon="plus" primary onClick={addQuote} />}
+      <Container>
+        <h1>Calculadora en 4K</h1>
+        <Segment secondary raised>
+          <Grid relaxed="very" stackable>
+            <Grid.Row>
+              <Grid.Column width={5}>
+                <Form style={{ textAlign: 'center' }}>
+                  Formato
+                  <select
+                    id={0}
+                    defaultValue="d"
+                    onChange={e => setFormat(e.target.value)}
+                  >
+                    <option value="d">Decimal</option>
+                    <option value="a">Americano</option>
+                    <option value="f">Fraccion</option>
+                  </select>
+                  Apuesta
+                  <Form.Input
+                    type="number"
+                    value={bet}
+                    onChange={e => setBet(e.target.value)}
                   />
-                </Table.Row>
-              </Table.Header>
-              <Table.Body>
-                {quotes.map(row => (
-                  <Table.Row key={row.id}>
-                    <Table.Cell>{row.id}</Table.Cell>
-                    <Table.Cell>
-                      <Input
-                        value={row.logro}
-                        onChange={e => editQuote(row.id, e.target.value)}
-                      />
-                    </Table.Cell>
-                    <Table.Cell>{row.decimal}</Table.Cell>
-                    <Table.Cell>{row.americano}</Table.Cell>
-                    <Table.Cell>{row.fraccionario}</Table.Cell>
-                    <Table.Cell>
-                      <Button
-                        icon="trash"
-                        negative
-                        onClick={() => deleteQuote(row.id)}
-                      />
-                    </Table.Cell>
+                </Form>
+              </Grid.Column>
+
+              {/* aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa */}
+              <GridColumn width={11}>
+                <Grid textAlign="center">
+                  <Grid.Row>
+                    <Grid.Column width={4}>
+                      <Button.Group vertical>
+                        <Button color="blue" content="Monto Apostado" />
+                        <Button
+                          basic
+                          color="blue"
+                          icon="dollar"
+                          content={bet === '' ? '0' : bet}
+                        />
+                      </Button.Group>
+                    </Grid.Column>
+                    <Grid.Column width={4}>
+                      <Button.Group vertical>
+                        <Button color="yellow" content="Ganancia Total" />
+                        <Button
+                          basic
+                          color="yellow"
+                          icon="dollar"
+                          content={stats.ganancia === '' ? '0' : stats.ganancia}
+                        />
+                      </Button.Group>
+                    </Grid.Column>
+                    <Grid.Column width={4}>
+                      <Button.Group vertical>
+                        <Button color="green" content="Total a Cobrar" />
+                        <Button
+                          basic
+                          color="green"
+                          icon="dollar"
+                          content={stats.total}
+                        />
+                      </Button.Group>
+                    </Grid.Column>
+                  </Grid.Row>
+                </Grid>
+
+                <Divider />
+
+                <Grid textAlign="center">
+                  <Grid.Row>
+                    <Grid.Column width={5}>
+                      <Button.Group vertical>
+                        <Button color="brown" content="Cuota Total Decimal" />
+                        <Button
+                          basic
+                          color="orange"
+                          content={stats.dec === '' ? '0' : stats.dec}
+                        />
+                      </Button.Group>
+                    </Grid.Column>
+                    <Grid.Column width={5}>
+                      <Button.Group vertical>
+                        <Button color="brown" content="Cuota Total Americano" />
+                        <Button basic color="orange" content={stats.ame} />
+                      </Button.Group>
+                    </Grid.Column>
+                    <Grid.Column width={5}>
+                      <Button.Group vertical>
+                        <Button
+                          color="brown"
+                          content="Cuota Total Fraccionado"
+                        />
+                        <Button
+                          basic
+                          color="orange"
+                          content={stats.fra === '' ? '0/0' : stats.fra}
+                        />
+                      </Button.Group>
+                    </Grid.Column>
+                  </Grid.Row>
+                </Grid>
+              </GridColumn>
+            </Grid.Row>
+          </Grid>
+        </Segment>
+
+        <Grid>
+          <Grid.Row>
+            <GridColumn>
+              <Table striped>
+                <Table.Header>
+                  <Table.Row textAlign="center">
+                    <Table.Cell active width={2} content="ID" />
+                    <Table.Cell active width={5} content="Cuota" />
+                    <Table.Cell active width={2} content="Decimal" />
+                    <Table.Cell active width={3} content="Americano" />
+                    <Table.Cell active width={2} content="Fraccionado" />
+                    <Table.Cell
+                      active
+                      width={2}
+                      content={
+                        <Button
+                          primary
+                          circular
+                          icon="plus"
+                          onClick={addQuote}
+                        />
+                      }
+                    />
                   </Table.Row>
-                ))}
-              </Table.Body>
-            </Table>
-          </GridColumn>
-        </Grid.Row>
-      </Grid>
+                </Table.Header>
+                <Table.Body>
+                  {quotes.map(row => (
+                    <Table.Row textAlign="center" key={row.id}>
+                      <Table.Cell>Cuota {runCont()}</Table.Cell>
+                      <Table.Cell
+                        content={
+                          <Input
+                            value={row.logro}
+                            onChange={e => editQuote(row.id, e.target.value)}
+                          />
+                        }
+                      />
+                      <Table.Cell content={row.decimal} />
+                      <Table.Cell content={row.americano} />
+                      <Table.Cell content={row.fraccionario} />
+                      <Table.Cell
+                        content={
+                          <Button
+                            negative
+                            animated="vertical"
+                            onClick={() => deleteQuote(row.id)}
+                          >
+                            <Button.Content
+                              visible
+                              content={<Icon name="minus" />}
+                            />
+                            <Button.Content
+                              hidden
+                              content={<Icon name="trash" />}
+                            />
+                          </Button>
+                        }
+                      />
+                    </Table.Row>
+                  ))}
+                </Table.Body>
+              </Table>
+            </GridColumn>
+          </Grid.Row>
+        </Grid>
+      </Container>
     </>
   );
 }
