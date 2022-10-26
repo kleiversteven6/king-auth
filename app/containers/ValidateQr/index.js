@@ -35,19 +35,17 @@ export default function ValidateQr() {
         </Grid.Column>
         <Grid.Column width={12} verticalAlign="middle">
           <Form onSubmit={validate}>
-            <Form.Field
+            <Form.Input
               value={Secret}
               onChange={e => setSecret(e.target.value)}
               label="Secret"
-              control="input"
             />
-            <Form.Field
+            <Form.Input
               value={Code}
               onChange={e => setCode(e.target.value)}
               label="Code"
-              control="input"
             />
-            <Button>Submit</Button>
+            <Button color="blue">Validar</Button>
           </Form>
         </Grid.Column>
       </Grid>

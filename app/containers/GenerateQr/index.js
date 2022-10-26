@@ -21,7 +21,9 @@ export default function GenerateQr() {
           <Card.Description>{Response.secret}</Card.Description>
         </Card.Content>
         <Card.Content textAlign="center">
-          <Button onClick={generate}>Generar QR</Button>
+          <Button color="blue" onClick={generate}>
+            Generar QR
+          </Button>
         </Card.Content>
       </Card>
     </Container>
