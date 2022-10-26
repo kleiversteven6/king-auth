@@ -48,6 +48,15 @@ export default function MenuComponent() {
         >
           Validar Qr
         </Menu.Item>
+        <Menu.Item
+          name="acortar"
+          active={activeItem === 'acortar'}
+          onClick={handleItemClick}
+          as={NavLink}
+          to="./acortar"
+        >
+          Short Urls
+        </Menu.Item>
       </Menu>
     </>
   );
