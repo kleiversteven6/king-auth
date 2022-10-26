@@ -10,10 +10,6 @@ import React, { useState, useEffect } from 'react';
 import image from 'images/ciberseguridad.png';
 
 export default function ValidateQr() {
-  const [Response, setResponse] = useState({
-    response: '',
-    code: '',
-  });
   const [Secret, setSecret] = useState('');
   const [Code, setCode] = useState('');
   const [content, setContent] = useState('');
@@ -23,8 +19,7 @@ export default function ValidateQr() {
     )
       .then(result => result.json())
       .then(data => {
-        setResponse(data);
-        if (Response.response === 'false') {
+        if (data.response === 'false') {
           setContent(<Message color="red">Autenticación Errónea</Message>);
         } else {
           setContent(<Message color="green">Autenticación Exitosa</Message>);
@@ -40,19 +35,17 @@ export default function ValidateQr() {
         </Grid.Column>
         <Grid.Column width={12} verticalAlign="middle">
           <Form onSubmit={validate}>
-            <Form.Field
+            <Form.Input
               value={Secret}
               onChange={e => setSecret(e.target.value)}
               label="Secret"
-              control="input"
             />
-            <Form.Field
+            <Form.Input
               value={Code}
               onChange={e => setCode(e.target.value)}
               label="Code"
-              control="input"
             />
-            <Button>Submit</Button>
+            <Button color="blue">Validar</Button>
           </Form>
         </Grid.Column>
       </Grid>
