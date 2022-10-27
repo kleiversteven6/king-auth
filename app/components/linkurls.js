@@ -1,26 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { Table } from 'semantic-ui-react';
-import { getWebsites } from '../firebase/api';
+/* eslint-disable react/prop-types */
+import React, { useEffect } from 'react';
+import { Button, Table } from 'semantic-ui-react';
+import { deleteWebsite } from '../firebase/api';
 
-export default function LinkUrls() {
-  const [websites, setWebsites] = useState([]);
-
-  const getLinks = async () => {
-    const querySnapshot = await getWebsites();
-    // onGetLinks((querySnapshot) => {
-    const docs = [];
-    querySnapshot.forEach(doc => {
-      docs.push({ ...doc.data(), id: doc.id });
-    });
-    setWebsites(docs);
-    console.log(docs);
-    // });
+export default function LinkUrls({ websites }) {
+  const deletesite = id => {
+    deleteWebsite(id);
   };
-
-  useEffect(() => {
-    getLinks();
-  }, []);
-
+  useEffect(() => {}, []);
   return (
     <>
       <Table celled striped>
@@ -42,7 +29,17 @@ export default function LinkUrls() {
               <Table.Cell> {Date(row.DateTime)} </Table.Cell>
 
               <Table.Cell>{row.clicks} </Table.Cell>
-              <Table.Cell>{row.id} </Table.Cell>
+              <Table.Cell>
+                <Button.Group>
+                  <Button
+                    icon="trash"
+                    onClick={() => deletesite(row.id)}
+                    color="red"
+                  />
+                  <Button icon="pencil" color="teal" />
+                  <Button icon="share alternate" primary />
+                </Button.Group>
+              </Table.Cell>
             </Table.Row>
           ))}
         </Table.Body>

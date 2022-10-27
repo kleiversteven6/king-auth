@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Form } from 'semantic-ui-react';
 import LinkUrls from '../../components/linkurls';
-import { saveWebsite } from '../../firebase/api';
+import { saveWebsite, getWebsites } from '../../firebase/api';
 
 export default function ShortUrls() {
   const [url, setUrl] = useState('');
@@ -12,6 +12,23 @@ export default function ShortUrls() {
     const querySnapshot = await saveWebsite(newLink);
     console.log(querySnapshot);
   };
+  const [websites, setWebsites] = useState([]);
+
+  const getLinks = async () => {
+    const querySnapshot = await getWebsites();
+    // onGetLinks((querySnapshot) => {
+    const docs = [];
+    querySnapshot.forEach(doc => {
+      docs.push({ ...doc.data(), id: doc.id });
+    });
+    setWebsites(docs);
+    console.log(docs);
+    // });
+  };
+
+  useEffect(() => {
+    getLinks();
+  }, [websites]);
   return (
     <>
       <Form unstackable onSubmit={addOrEditLink}>
@@ -33,7 +50,7 @@ export default function ShortUrls() {
           <Button type="submit">Acortar Url</Button>
         </Form.Group>
       </Form>
-      <LinkUrls />
+      <LinkUrls websites={websites} />
     </>
   );
 }
