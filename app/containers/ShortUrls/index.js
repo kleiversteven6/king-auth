@@ -28,7 +28,7 @@ export default function ShortUrls() {
 
   useEffect(() => {
     getLinks();
-  }, [websites]);
+  }, [websites.url, websites.short, websites.clicks]);
   return (
     <>
       <Form unstackable onSubmit={addOrEditLink}>
