@@ -18,7 +18,9 @@ import CalculatePage from '../CalculatePage';
 import GenerateQr from '../GenerateQr';
 import ValidateQr from '../ValidateQr';
 import MenuComponent from '../../components/Menu';
+import GraphicsPage from '../GraphicsPage';
 import ShortUrls from '../ShortUrls';
+
 
 export default function App() {
   return (
@@ -38,6 +40,7 @@ export default function App() {
                   <Route exact path="/calculadora" component={CalculatePage} />
                   <Route exact path="/generar" component={GenerateQr} />
                   <Route exact path="/validar" component={ValidateQr} />
+                  <Route exact path="/graficas" component={GraphicsPage} />
                   <Route exact path="/acortar" component={ShortUrls} />
                   <Route component={NotFoundPage} />
                 </Switch>
