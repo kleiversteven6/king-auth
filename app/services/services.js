@@ -10,3 +10,8 @@ export const getIp = () => {
   req.open('GET', 'http://ip-api.com/json', true);
   req.send();
 };
+
+export const getNavigator = () => {
+  const hola = 0;
+  console.log(hola);
+};
