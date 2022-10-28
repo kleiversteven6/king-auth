@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { Header, Segment, Button, Tab } from 'semantic-ui-react';
 
+
 import ShareComponent from '../../components/Share';
 import SocialComponent from '../../components/Social';
 import { getWebsite } from '../../firebase/api';
@@ -14,11 +15,13 @@ export default function GraphicsPage({ match }) {
     const querySnapshot = await getWebsite(match.params.id);
     // const docs = {url: datos.id, short:datos.short}
 
+
     setData(querySnapshot.data());
   };
   console.log(data);
 
   const url = 'https://google.com';
+
   const short = 'google.com';
   const stats = 'gooooooooooogle.com';
 
@@ -54,6 +57,7 @@ export default function GraphicsPage({ match }) {
     <div>
       Graphics Page
       <Segment>
+
         <ShareComponent short={short} stats={stats} url={data.url} />
         <SocialComponent short={short} url={data.url} />
         <Header>{url}</Header>
@@ -78,6 +82,7 @@ export default function GraphicsPage({ match }) {
             content: `${short}`,
           }}
         />
+
       </Segment>
       <Tab
         menu={{ fluid: true, vertical: true, tabular: true, color: 'blue' }}

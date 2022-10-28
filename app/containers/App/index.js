@@ -21,6 +21,9 @@ import MenuComponent from '../../components/Menu';
 import GraphicsPage from '../GraphicsPage';
 import ShortUrls from '../ShortUrls';
 
+import UrlPage from '../UrlPage';
+
+
 export default function App() {
   return (
     <>
@@ -39,9 +42,13 @@ export default function App() {
                   <Route exact path="/calculadora" component={CalculatePage} />
                   <Route exact path="/generar" component={GenerateQr} />
                   <Route exact path="/validar" component={ValidateQr} />
+
                   <Route exact path="/graficas" component={GraphicsPage} />
                   <Route exact path="/graficas/:id" component={GraphicsPage} />
+
                   <Route exact path="/acortar" component={ShortUrls} />
+                  <Route exact path="/graficas/:id" component={GraphicsPage} />
+                  <Route exact path="/url/:short" component={UrlPage} />
                   <Route component={NotFoundPage} />
                 </Switch>
               </Container>
