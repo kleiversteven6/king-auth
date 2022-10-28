@@ -53,6 +53,7 @@ export default function GraphicsPage({ match }) {
     getLink();
   }, []);
 
+
   return (
     <div>
       Graphics Page
@@ -84,10 +85,12 @@ export default function GraphicsPage({ match }) {
         />
 
       </Segment>
+
       <Tab
         menu={{ fluid: true, vertical: true, tabular: true, color: 'blue' }}
         panes={panes}
       />
+
     </div>
   );
 }
