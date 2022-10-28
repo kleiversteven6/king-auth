@@ -10,9 +10,13 @@ import {
 } from 'firebase/firestore';
 import { db } from './firebase';
 const collectionName = 'your_urls';
+const collectionlog = 'log_urlsShort';
 
 export const saveWebsite = newLink =>
   addDoc(collection(db, collectionName), newLink);
+
+export const savelog = datalog =>
+  addDoc(collection(db, collectionlog), datalog);
 
 export const updateWebsite = (id, updatedFields) =>
   updateDoc(doc(db, collectionName, id), updatedFields);
