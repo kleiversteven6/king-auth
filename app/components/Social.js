@@ -27,8 +27,29 @@ export default function SocialComponent(props) {
             <TextArea value={urlShare} />
           </GridRow>
           <GridRow>
-            <Button icon="facebook f" content="Facebook" basic color="blue" />
-            <Button icon="twitter" content="Twitter" basic color="blue" />
+            <a href={`https://www.facebook.com/sharer.php?u=${props.url}`}>
+              <Button
+                icon="facebook f"
+                content="Facebook"
+                basic
+                color="blue"
+                component
+              />
+              <a
+                href={`https://twitter.com/share?ref_src=twsrc%5Etfw&url=${
+                  props.url
+                }`}
+                className="twitter-share-button"
+                data-show-count="false"
+              >
+                <Button icon="twitter" content="Twitter" basic color="blue" />
+              </a>
+              <script
+                async
+                src="https://platform.twitter.com/widgets.js"
+                charset="utf-8"
+              />
+            </a>
           </GridRow>
         </GridColumn>
       </GridRow>
