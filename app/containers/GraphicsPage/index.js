@@ -3,22 +3,35 @@
 import React, { useEffect, useState } from 'react';
 import { Header, Segment, Button, Tab } from 'semantic-ui-react';
 
-
 import ShareComponent from '../../components/Share';
 import SocialComponent from '../../components/Social';
-import { getWebsite } from '../../firebase/api';
+import GraphicLine from '../../components/GraphicLine';
+import Mapamundi from '../../components/mapamundi';
+import { getWebsite, getGroupCountry } from '../../firebase/api';
+import { getNavigator } from '../../services/services';
 
 export default function GraphicsPage({ match }) {
   const [data, setData] = useState({});
+  const [database, setDatabase] = useState({});
+  const [detebase, setDetebase] = useState({});
+  const [ditibase, setDitibase] = useState({});
 
   const getLink = async () => {
     const querySnapshot = await getWebsite(match.params.id);
     // const docs = {url: datos.id, short:datos.short}
 
-
-    setData(querySnapshot.data());
+    const dete = querySnapshot.data();
+    setData(dete);
   };
-  console.log(data);
+
+  const test = async () => {
+    console.log(match.params.id);
+    const querySnapshot = await getGroupCountry(match.params.id);
+
+    setDatabase(querySnapshot.mapamundi);
+    setDetebase(querySnapshot.line);
+    setDitibase(querySnapshot.drill);
+  };
 
   const url = 'https://google.com';
 
@@ -28,11 +41,19 @@ export default function GraphicsPage({ match }) {
   const panes = [
     {
       menuItem: { content: 'Estadísticas', icon: 'chart area' },
-      render: () => <Tab.Pane>Tab 1 Content</Tab.Pane>,
+      render: () => (
+        <Tab.Pane key={1}>
+          <GraphicLine data={detebase} drill={ditibase} />
+        </Tab.Pane>
+      ),
     },
     {
       menuItem: { content: 'Ubicación', icon: 'map marker alternate' },
-      render: () => <Tab.Pane>Tab 2 Content</Tab.Pane>,
+      render: () => (
+        <Tab.Pane key={2}>
+          <Mapamundi data={database} />
+        </Tab.Pane>
+      ),
     },
     {
       menuItem: { content: 'Ips', icon: 'globe' },
@@ -41,7 +62,7 @@ export default function GraphicsPage({ match }) {
     {
       menuItem: { content: 'Compartir', icon: 'share alternate' },
       render: () => (
-        <Tab.Pane>
+        <Tab.Pane key={3}>
           <ShareComponent short={short} stats={stats} url={url} />
           <SocialComponent short={short} url={url} />
         </Tab.Pane>
@@ -51,14 +72,15 @@ export default function GraphicsPage({ match }) {
 
   useEffect(() => {
     getLink();
+    test();
   }, []);
-
 
   return (
     <div>
       Graphics Page
+      <br />
+      {getNavigator()}
       <Segment>
-
         <ShareComponent short={short} stats={stats} url={data.url} />
         <SocialComponent short={short} url={data.url} />
         <Header>{url}</Header>
@@ -83,14 +105,11 @@ export default function GraphicsPage({ match }) {
             content: `${short}`,
           }}
         />
-
       </Segment>
-
       <Tab
         menu={{ fluid: true, vertical: true, tabular: true, color: 'blue' }}
         panes={panes}
       />
-
     </div>
   );
 }
