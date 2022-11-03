@@ -1,36 +1,62 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
+import Drilldown from 'highcharts-drilldown';
 
-export default function GraphicLine() {
+export default function GraphicLine({ data, drill }) {
   const options = {
+    chart: {
+      type: 'column',
+    },
+
     title: {
       text: 'Accesos por Facebook',
     },
 
     xAxis: {
-      categories: [
-        'Enero',
-        'Febrero',
-        'Marzo',
-        'Diciembreeeee',
-        'Queso',
-        'Jamon',
-        'Tortillas',
-      ],
+      type: 'category',
     },
 
     yAxis: {
-      text: 'Clicks realizados',
+      title: {
+        text: 'Clicks realizados',
+      },
+    },
+
+    plotOptions: {
+      series: {
+        borderWidth: 0,
+        dataLabels: {
+          enabled: true,
+          format: '{point.y} Clicks',
+        },
+      },
+    },
+
+    tooltip: {
+      headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+      pointFormat:
+        '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b> en total<br/>',
     },
 
     series: [
       {
         name: 'Clicks en Facebook',
-        data: [1, 2, 3, 5, 9, 2, -2],
+        colorByPoint: true,
+        data,
       },
     ],
+    drilldown: {
+      breadcrumbs: {
+        position: {
+          align: 'left',
+        },
+      },
+      series: [drill],
+    },
   };
 
+  if (!Highcharts.Chart.prototype.addSeriesAsDrilldown) Drilldown(Highcharts);
   return <HighchartsReact highcharts={Highcharts} options={options} />;
 }

@@ -23,7 +23,6 @@ import ShortUrls from '../ShortUrls';
 
 import UrlPage from '../UrlPage';
 
-
 export default function App() {
   return (
     <>

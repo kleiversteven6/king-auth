@@ -1,22 +1,21 @@
-import React from 'react';
+/* eslint-disable react/prop-types */
 
+import React from 'react';
 import Highcharts from 'highcharts/highmaps';
 import HighchartsReact from 'highcharts-react-official';
+import './mapData';
 
-export default function Mapamundi() {
-  const data = [['fo', 50], ['us', 1], ['jp', 100], ['in', 20]];
-
+export default function Mapamundi({ data }) {
   const options = {
     chart: {
-      map: 'custom/world',
+      map: 'custom/world-robinson-highres',
     },
     colorAxis: {
       min: 0,
-      stops: [[0, '#000022'], [0.67, '#222299'], [1, '#4444FF']],
+      stops: [[0, '#5555FF'], [0.67, '#222299'], [1, '#000011']],
     },
     title: {
-      text:
-        'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaarmando Pizzas.',
+      text: 'Clicks Realizados segun la Ubicacion',
     },
     mapNavigation: {
       enabled: true,
@@ -27,7 +26,7 @@ export default function Mapamundi() {
     series: [
       {
         data,
-        mapData: Highcharts.maps['custom/world'],
+        mapData: 'custom/world-robinson-highres',
         name: 'Click Realizados',
         states: {
           hover: {
@@ -40,7 +39,6 @@ export default function Mapamundi() {
 
   return (
     <>
-      aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
       <HighchartsReact
         highcharts={Highcharts}
         constructorType="mapChart"
