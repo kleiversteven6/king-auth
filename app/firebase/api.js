@@ -29,6 +29,9 @@ export const onGetLinks = callback => {
   return unsub;
 };
 
+export const getWebsiteShort = short =>
+  getDocs(query(collection(db, collectionName), where('short', '==', short)));
+
 export const getWebsites = () => getDocs(collection(db, collectionName));
 
 export const deleteWebsite = id => deleteDoc(doc(db, collectionName, id));

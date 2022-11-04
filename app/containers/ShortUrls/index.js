@@ -1,17 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Form } from 'semantic-ui-react';
+import { Button, Container } from 'semantic-ui-react';
+
+import FormUrl from '../../components/FormUrl';
+
 import LinkUrls from '../../components/linkurls';
-import { saveWebsite, getWebsites, deleteWebsite } from '../../firebase/api';
+import { getWebsites, deleteWebsite } from '../../firebase/api';
 
 export default function ShortUrls() {
-  const [url, setUrl] = useState('');
-  const [short, setShort] = useState('');
-  const addOrEditLink = async () => {
-    const DateTime = new Date();
-    const newLink = { url, short, cliks: 0, DateTime };
-    await saveWebsite(newLink);
-    getLinks();
-  };
   const [websites, setWebsites] = useState([]);
 
   const getLinks = async () => {
@@ -21,7 +16,7 @@ export default function ShortUrls() {
     querySnapshot.forEach(doc => {
       docs.push({ ...doc.data(), id: doc.id });
     });
-    console.log(docs);
+
     setWebsites(docs);
     // });
   };
@@ -32,28 +27,16 @@ export default function ShortUrls() {
   useEffect(() => {
     getLinks();
   }, []);
+  const [open, setOpen] = useState(false);
   return (
     <>
-      <Form unstackable onSubmit={addOrEditLink}>
-        <Form.Group widths={2}>
-          <Form.Input
-            label="Url "
-            placeholder="https://"
-            name="url"
-            value={url}
-            onChange={e => setUrl(e.target.value)}
-          />
-          <Form.Input
-            label="Alias"
-            placeholder=" "
-            name="short"
-            value={short}
-            onChange={e => setShort(e.target.value)}
-          />
-          <Button type="submit">Acortar Url</Button>
-        </Form.Group>
-      </Form>
-      <LinkUrls websites={websites} deletesite={deletesite} />
+      <Button color="blue" basic floated="right" onClick={() => setOpen(true)}>
+        Crear
+      </Button>
+      <FormUrl setOpen={setOpen} open={open} title="Acortar url" />
+      <Container style={{ top: '10px', position: 'relative' }}>
+        <LinkUrls websites={websites} deletesite={deletesite} />
+      </Container>
     </>
   );
 }
