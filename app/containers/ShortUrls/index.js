@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { Button, Container } from 'semantic-ui-react';
+
 import FormUrl from '../../components/FormUrl';
 
 import LinkUrls from '../../components/linkurls';
@@ -14,7 +16,7 @@ export default function ShortUrls() {
     querySnapshot.forEach(doc => {
       docs.push({ ...doc.data(), id: doc.id });
     });
-    console.log(docs);
+
     setWebsites(docs);
     // });
   };
@@ -25,10 +27,16 @@ export default function ShortUrls() {
   useEffect(() => {
     getLinks();
   }, []);
+  const [open, setOpen] = useState(false);
   return (
     <>
-      <FormUrl />
-      <LinkUrls websites={websites} deletesite={deletesite} />
+      <Button color="blue" basic floated="right" onClick={() => setOpen(true)}>
+        Crear
+      </Button>
+      <FormUrl setOpen={setOpen} open={open} title="Acortar url" />
+      <Container style={{ top: '10px', position: 'relative' }}>
+        <LinkUrls websites={websites} deletesite={deletesite} />
+      </Container>
     </>
   );
 }

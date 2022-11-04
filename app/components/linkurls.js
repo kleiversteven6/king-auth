@@ -1,18 +1,49 @@
 /* eslint-disable react/prop-types */
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Button, Header, Icon, Modal, Table } from 'semantic-ui-react';
+import {
+  Container,
+  Button,
+  Grid,
+  GridColumn,
+  Table,
+  Transition,
+} from 'semantic-ui-react';
 import FormUrl from './FormUrl';
+import ShareComponent from './Share';
+import SocialComponent from './Social';
 
 export default function LinkUrls({ websites, deletesite }) {
   const [open, setOpen] = useState(false);
+  const [visible, setVisible] = useState(false);
   const [LinkUrl, setLinkUrl] = useState({ short: '', url: '', id: '' });
+
   return (
     <>
+      <Transition visible={visible} animation="drop" duration={500}>
+        <Container>
+          <Button
+            basic
+            color="grey"
+            icon="remove"
+            onClick={() => setVisible(false)}
+            floated="right"
+          />
+          <Grid columns={2} celled>
+            <Grid.Row>
+              <GridColumn>
+                <ShareComponent short={LinkUrl.short} url={LinkUrl.url} />
+              </GridColumn>
+              <GridColumn>
+                <SocialComponent short={LinkUrl.short} url={LinkUrl.url} />
+              </GridColumn>
+            </Grid.Row>
+          </Grid>
+        </Container>
+      </Transition>
       <Table celled striped>
         <Table.Header>
           <Table.Row>
-            <Table.HeaderCell />
             <Table.HeaderCell>Shorth url</Table.HeaderCell>
             <Table.HeaderCell>Url original</Table.HeaderCell>
             <Table.HeaderCell>Creada</Table.HeaderCell>
@@ -24,7 +55,6 @@ export default function LinkUrls({ websites, deletesite }) {
         <Table.Body>
           {websites.map(row => (
             <Table.Row key={row.id}>
-              <Table.Cell>{row.id} </Table.Cell>
               <Table.Cell>
                 <a href={`/url/${row.short}`} target="_blank">
                   {row.short}
@@ -40,7 +70,14 @@ export default function LinkUrls({ websites, deletesite }) {
                     <Button icon="chart bar outline" color="violet" />
                   </NavLink>
 
-                  <Button icon="share alternate" color="green" />
+                  <Button
+                    icon="share alternate"
+                    color="green"
+                    onClick={() => {
+                      setLinkUrl(row);
+                      setVisible(true);
+                    }}
+                  />
                   <Button
                     icon="trash"
                     onClick={() => deletesite(row.id)}
@@ -61,17 +98,13 @@ export default function LinkUrls({ websites, deletesite }) {
           ))}
         </Table.Body>
       </Table>
-      <Modal closeIcon open={open} onClose={() => setOpen(false)}>
-        <Header icon="archive" content="Archive Old Messages" />
-        <Modal.Content>
-          <FormUrl LinkUrl={LinkUrl} />
-        </Modal.Content>
-        <Modal.Actions>
-          <Button color="red" onClick={() => setOpen(false)}>
-            <Icon name="remove" /> Cerrar
-          </Button>
-        </Modal.Actions>
-      </Modal>{' '}
+
+      <FormUrl
+        LinkUrl={LinkUrl}
+        open={open}
+        setOpen={setOpen}
+        title="Actualizar Url"
+      />
     </>
   );
 }
