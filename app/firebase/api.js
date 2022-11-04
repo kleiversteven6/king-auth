@@ -9,6 +9,7 @@ import {
   getDocs,
   query,
   where,
+  orderBy,
 } from 'firebase/firestore';
 import { db } from './firebase';
 const collectionName = 'your_urls';
@@ -39,18 +40,23 @@ export const updateClicksCountries = (id, updatedFields) =>
 
 export const getGroupCountry = async id => {
   const querySnapshot = await getDocs(
-    query(collection(db, collectionlog), where('idurl', '==', id)),
+    query(
+      collection(db, collectionlog),
+      where('idurl', '==', id),
+      where('DateTime', '>', new Date('11/1/2022')),
+      where('DateTime', '<', new Date('11/30/2022')),
+      orderBy('DateTime'),
+    ),
   );
 
   const countries = [];
   const weeks = [];
-  const days = [];
-  let drill = {};
+  const drill = [];
 
   querySnapshot.forEach(data => {
     const datos = data.data();
 
-    // Clicks por Paises ----------------------------------------------------------------
+    // Clicks por Paises --------------------------------------------------------------------
     const found = countries.find(
       obj => obj.country === datos.countryCode.toLowerCase(),
     );
@@ -62,7 +68,7 @@ export const getGroupCountry = async id => {
       countries.push({ ...reg });
     }
 
-    // Clicks por Fecha -----------------------------------------------------------------
+    // Clicks por Fecha ---------------------------------------------------------------------
     const fecha = new Date(datos.DateTime.toDate().toString());
 
     // Semanas
@@ -72,18 +78,18 @@ export const getGroupCountry = async id => {
       return Math.ceil(b / 7);
     }
 
-    function getWeekLength(x = 'end') {
+    function getWeekLength(x = 'end', y = 0) {
       let a = new Date(Date.now());
-      a = a.getFullYear();
+      a = a.getFullYear(); // Contiene año actual
 
-      const b = new Date();
-      const c = getWeek() * 7;
+      const b = new Date(); // Variable con Fecha resultado
+      const c = getWeek() * 7; // Contiene cantidad de semanas actuales
 
       if (x === 'start') {
-        b.setFullYear(a, 0, c - 4);
+        b.setFullYear(a, 0, c - 5);
         if (b.getFullYear() !== fecha.getFullYear()) b.setFullYear(a, 0, 1);
       } else {
-        b.setFullYear(a, 0, c + 2);
+        b.setFullYear(a, 0, c + (1 - y));
         if (b.getFullYear() !== fecha.getFullYear()) b.setFullYear(a, 11, 31);
       }
 
@@ -93,46 +99,64 @@ export const getGroupCountry = async id => {
     const week = getWeek() + 1;
     const weekFound = weeks.find(obj => obj.drilldown === week);
 
-    if (weekFound) weekFound.y += 1;
-    else {
-      const reg = {
+    // Dias de las semanas + Asignar Semanas
+    const dayList = [
+      [`Domingo <br/> ${getWeekLength('end', 6)}`, 0],
+      [`Lunes <br/> ${getWeekLength('end', 5)}`, 0],
+      [`Martes <br/> ${getWeekLength('end', 4)}`, 0],
+      [`Miercoles <br/> ${getWeekLength('end', 3)}`, 0],
+      [`Jueves <br/> ${getWeekLength('end', 2)}`, 0],
+      [`Viernes <br/> ${getWeekLength('end', 1)}`, 0],
+      [`Sabado <br/> ${getWeekLength('end')}`, 0],
+    ];
+
+    if (weekFound) {
+      weekFound.y += 1;
+
+      let k = 0;
+      const drillFound = drill.find(obj => obj.id === week);
+      drillFound.data.forEach(obj => {
+        if (obj[0] === dayList[fecha.getDay()][0]) drillFound.data[k][1] += 1;
+        k += 1;
+      });
+    } else {
+      let dete = [];
+
+      if (getWeek() !== 0) dete = dayList;
+      else {
+        for (let k = 0; k < 7; k += 1) {
+          if (k >= fecha.getDay()) dete.push([...dayList[k]]);
+        }
+      }
+
+      let k = 0;
+      dete.forEach(obj => {
+        if (obj[0] === dayList[fecha.getDay()][0]) dete[k][1] += 1;
+        k += 1;
+      });
+      console.log(dete);
+
+      const w = {
         drilldown: week,
         y: 1,
         name: `${getWeekLength('start')} - ${getWeekLength()}`,
       };
-      weeks.push({ ...reg });
+
+      const d = {
+        name: `${getWeekLength('start')} - ${getWeekLength()}`,
+        id: week,
+        data: dete,
+      };
+
+      weeks.push({ ...w });
+      drill.push({ ...d });
     }
-
-    // Dias de las semanas
-    // Domingo = 0
-    const dias = [
-      'Domingo',
-      'Lunes',
-      'Martes',
-      'Miercoles',
-      'Jueves',
-      'Viernes',
-      'Sabado',
-    ];
-
-    const day = dias[fecha.getDay()];
-    const dayFound = days.find(obj => obj[0] === day);
-
-    if (dayFound) dayFound[1] += 1;
-    else days.push([...[day, 1]]);
-
-    drill = {
-      name: `${getWeekLength('start')} - ${getWeekLength()}`,
-      id: week,
-      data: days,
-    };
   });
 
-  // console.log(days);
-  // console.log(weeks);
+  console.log(weeks);
   console.log(drill);
 
-  // Retornar Valores de la Funcion --------------------------------------------------
+  // Retornar Valores de la Funcion -------------------------------------------------------
   const ready = [];
   countries.forEach(data => {
     const propertyNames = Object.values(data);
@@ -141,8 +165,3 @@ export const getGroupCountry = async id => {
 
   return { mapamundi: ready, line: weeks, drill };
 };
-
-// console.log(weeks);
-// console.log(aa[5].reduce((partialSum, a) => partialSum + a, 0));
-// console.log(new Date(Date.now()).getDay());
-// console.log(new Date(Date.now()));

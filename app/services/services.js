@@ -1,10 +1,10 @@
-export async function getIp(ip) {
+export async function getIp() {
   const ehe = new Promise(resolve => {
     const req = new XMLHttpRequest();
 
     req.open(
       'GET',
-      `http://ip-api.com/json/${ip}?fields=status,country,countryCode,regionName,city,district`,
+      `http://ip-api.com/json/?fields=status,country,countryCode,regionName,city,district`,
       true,
     );
     req.send();
