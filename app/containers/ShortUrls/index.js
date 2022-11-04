@@ -27,6 +27,7 @@ export default function ShortUrls() {
   useEffect(() => {
     getLinks();
   }, []);
+
   const [open, setOpen] = useState(false);
   return (
     <>
@@ -34,7 +35,7 @@ export default function ShortUrls() {
         Crear
       </Button>
       <FormUrl setOpen={setOpen} open={open} title="Acortar url" />
-      <Container style={{ top: '10px', position: 'relative' }}>
+      <Container style={{ margin: '10px' }}>
         <LinkUrls websites={websites} deletesite={deletesite} />
       </Container>
     </>
