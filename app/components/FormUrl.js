@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, Header, Modal, Button, Icon } from 'semantic-ui-react';
 import { saveWebsite, updateWebsite } from '../firebase/api';
 
@@ -22,6 +22,10 @@ export default function FormUrl({
       await updateWebsite(LinkUrl.id, newLink);
     }
   };
+  useEffect(() => {
+    setUrl(LinkUrl.url);
+    setShort(LinkUrl.short);
+  }, [LinkUrl]);
   return (
     <Modal closeIcon open={open} onClose={() => setOpen(false)}>
       <Header icon="unlink" content={title} />

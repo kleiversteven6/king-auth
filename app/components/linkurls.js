@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import {
   Container,
@@ -17,7 +17,9 @@ export default function LinkUrls({ websites, deletesite }) {
   const [open, setOpen] = useState(false);
   const [visible, setVisible] = useState(false);
   const [LinkUrl, setLinkUrl] = useState({ short: '', url: '', id: '' });
-
+  useEffect(() => {
+    console.log(LinkUrl);
+  }, [LinkUrl]);
   return (
     <>
       <Transition visible={visible} animation="drop" duration={500}>
@@ -88,8 +90,8 @@ export default function LinkUrls({ websites, deletesite }) {
                     icon="pencil"
                     color="teal"
                     onClick={() => {
-                      setOpen(true);
                       setLinkUrl(row);
+                      setOpen(true);
                     }}
                   />
                 </Button.Group>
