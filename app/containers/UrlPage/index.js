@@ -1,31 +1,38 @@
 /* eslint-disable react/prop-types */
 import React, { useEffect } from 'react';
-import { getWebsites, updateWebsite } from '../../firebase/api';
+import { getWebsiteShort, updateWebsite, savelog } from '../../firebase/api';
+import { getIp } from '../../services/services';
 
 export default function UrlPage({ match }) {
   const websiteshort = async () => {
-    const querySnapshot = await getWebsites();
-    // onGetLinks((querySnapshot) => {
-    const docs = [];
+    const querySnapshot = await getWebsiteShort(match.params.short);
+    const datos = await getIp();
+    let url = {};
     querySnapshot.forEach(doc => {
-      docs.push({ ...doc.data(), id: doc.id });
+      url = doc.data();
+      url.id = doc.id;
     });
 
-    const url = docs.filter(q => q.short === match.params.short);
     const newLink = {
-      cliks: url[0].cliks + 1,
+      cliks: url.cliks + 1,
     };
-    console.log(url[0]);
-    await updateWebsite(url[0].id, newLink);
+    await updateWebsite(url.id, newLink);
+    const DateTime = new Date();
+    const newLinkLog = {
+      DateTime,
+      CITY: datos.city,
+      country: datos.country,
+      countryCode: datos.countryCode,
+      regionname: datos.regionName,
+      ip: datos.query,
+      short: match.params.short,
+    };
+    await savelog(newLinkLog);
+    window.location.href = url.url;
   };
 
   useEffect(() => {
     websiteshort();
   }, []);
-  return (
-    <>
-      Parametros
-      <h1>{match.params.short}</h1>
-    </>
-  );
+  return <></>;
 }

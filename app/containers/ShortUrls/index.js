@@ -1,17 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Form } from 'semantic-ui-react';
+import FormUrl from '../../components/FormUrl';
+
 import LinkUrls from '../../components/linkurls';
-import { saveWebsite, getWebsites, deleteWebsite } from '../../firebase/api';
+import { getWebsites, deleteWebsite } from '../../firebase/api';
 
 export default function ShortUrls() {
-  const [url, setUrl] = useState('');
-  const [short, setShort] = useState('');
-  const addOrEditLink = async () => {
-    const DateTime = new Date();
-    const newLink = { url, short, cliks: 0, DateTime };
-    await saveWebsite(newLink);
-    getLinks();
-  };
   const [websites, setWebsites] = useState([]);
 
   const getLinks = async () => {
@@ -34,25 +27,7 @@ export default function ShortUrls() {
   }, []);
   return (
     <>
-      <Form unstackable onSubmit={addOrEditLink}>
-        <Form.Group widths={2}>
-          <Form.Input
-            label="Url "
-            placeholder="https://"
-            name="url"
-            value={url}
-            onChange={e => setUrl(e.target.value)}
-          />
-          <Form.Input
-            label="Alias"
-            placeholder=" "
-            name="short"
-            value={short}
-            onChange={e => setShort(e.target.value)}
-          />
-          <Button type="submit">Acortar Url</Button>
-        </Form.Group>
-      </Form>
+      <FormUrl />
       <LinkUrls websites={websites} deletesite={deletesite} />
     </>
   );
