@@ -11,10 +11,9 @@ import {
 } from 'semantic-ui-react';
 import React from 'react';
 
-export default function ShareComponent({ short, stats, url }) {
+export default function ShareComponent({ short, url }) {
   const urlOrigin = `mi url ${url}`;
   const urlShort = `mi url ${short}`;
-  const urlStats = `mi url ${stats}`;
 
   return (
     <Grid celled="internally" relaxed="very">
@@ -35,7 +34,7 @@ export default function ShareComponent({ short, stats, url }) {
               defaultValue={urlShort}
             />
           </GridRow>
-          <GridRow>
+          <GridRow style={{}}>
             <Button
               color="blue"
               content="Url Original"
@@ -44,17 +43,6 @@ export default function ShareComponent({ short, stats, url }) {
                 color: 'grey',
                 pointing: 'left',
                 content: `${urlOrigin}`,
-              }}
-            />
-            <Button
-              color="blue"
-              content="Estadísticas"
-              label={{
-                as: 'a',
-                basic: true,
-                color: 'grey',
-                pointing: 'left',
-                content: `${urlStats}`,
               }}
             />
           </GridRow>

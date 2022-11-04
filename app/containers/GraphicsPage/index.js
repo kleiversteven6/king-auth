@@ -18,7 +18,6 @@ export default function GraphicsPage({ match }) {
 
   const getLink = async () => {
     const querySnapshot = await getWebsite(match.params.id);
-    // const docs = {url: datos.id, short:datos.short}
 
     const dete = querySnapshot.data();
     setData(dete);
@@ -40,6 +39,7 @@ export default function GraphicsPage({ match }) {
 
   const panes = [
     {
+
       menuItem: { content: 'Estadísticas', icon: 'chart area' },
       render: () => (
         <Tab.Pane key={1}>
@@ -56,7 +56,7 @@ export default function GraphicsPage({ match }) {
       ),
     },
     {
-      menuItem: { content: 'Ips', icon: 'globe' },
+      menuItem: { content: 'Estadística Mensual', icon: 'chart line' },
       render: () => <Tab.Pane>Tab 3 Content</Tab.Pane>,
     },
     {
@@ -77,14 +77,10 @@ export default function GraphicsPage({ match }) {
 
   return (
     <div>
-      Graphics Page
-      <br />
-      {getNavigator()}
       <Segment>
-        <ShareComponent short={short} stats={stats} url={data.url} />
-        <SocialComponent short={short} url={data.url} />
         <Header>{url}</Header>
         <Button
+          key={url}
           color="blue"
           content="Url Original"
           label={{
@@ -95,6 +91,7 @@ export default function GraphicsPage({ match }) {
           }}
         />
         <Button
+          key={short}
           color="blue"
           content="Short"
           label={{
