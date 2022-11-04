@@ -37,7 +37,7 @@ export default function GraphicLine({ data, drill }) {
     tooltip: {
       headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
       pointFormat:
-        '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b> en total<br/>',
+        '<i><span style="color:{point.color}">{point.name}</span></i>: <b>{point.y}</b> en total<br/>',
     },
 
     series: [
@@ -50,10 +50,10 @@ export default function GraphicLine({ data, drill }) {
     drilldown: {
       breadcrumbs: {
         position: {
-          align: 'left',
+          align: 'right',
         },
       },
-      series: [drill],
+      series: drill,
     },
   };
 
