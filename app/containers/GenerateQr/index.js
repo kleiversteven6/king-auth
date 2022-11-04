@@ -14,7 +14,7 @@ export default function GenerateQr() {
   };
   return (
     <Container>
-      <Card color="blue" centered="true">
+      <Card color="blue" centered>
         <Image src={Response.url} wrapped ui={false} />
         <Card.Content>
           <Card.Header>King-auth</Card.Header>

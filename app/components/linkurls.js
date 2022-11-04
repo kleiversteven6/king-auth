@@ -1,15 +1,46 @@
 /* eslint-disable react/prop-types */
-import React, { useEffect } from 'react';
-import { Button, Table } from 'semantic-ui-react';
-import { deleteWebsite } from '../firebase/api';
+import React, { useState } from 'react';
+import { NavLink } from 'react-router-dom';
+import {
+  Container,
+  Button,
+  Grid,
+  GridColumn,
+  Table,
+  Transition,
+} from 'semantic-ui-react';
+import FormUrl from './FormUrl';
+import ShareComponent from './Share';
+import SocialComponent from './Social';
 
-export default function LinkUrls({ websites }) {
-  const deletesite = id => {
-    deleteWebsite(id);
-  };
-  useEffect(() => {}, []);
+export default function LinkUrls({ websites, deletesite }) {
+  const [open, setOpen] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const [LinkUrl, setLinkUrl] = useState({ short: '', url: '', id: '' });
+
   return (
     <>
+      <Transition visible={visible} animation="drop" duration={500}>
+        <Container>
+          <Button
+            basic
+            color="grey"
+            icon="remove"
+            onClick={() => setVisible(false)}
+            floated="right"
+          />
+          <Grid columns={2} celled>
+            <Grid.Row>
+              <GridColumn>
+                <ShareComponent short={LinkUrl.short} url={LinkUrl.url} />
+              </GridColumn>
+              <GridColumn>
+                <SocialComponent short={LinkUrl.short} url={LinkUrl.url} />
+              </GridColumn>
+            </Grid.Row>
+          </Grid>
+        </Container>
+      </Transition>
       <Table celled striped>
         <Table.Header>
           <Table.Row>
@@ -24,26 +55,56 @@ export default function LinkUrls({ websites }) {
         <Table.Body>
           {websites.map(row => (
             <Table.Row key={row.id}>
-              <Table.Cell>{row.short} </Table.Cell>
+              <Table.Cell>
+                <a href={`/url/${row.short}`} target="_blank">
+                  {row.short}
+                </a>
+              </Table.Cell>
               <Table.Cell> {row.url} </Table.Cell>
-              <Table.Cell> {Date(row.DateTime)} </Table.Cell>
+              <Table.Cell> {row.DateTime.toDate().toString()} </Table.Cell>
 
-              <Table.Cell>{row.clicks} </Table.Cell>
+              <Table.Cell>{row.cliks} </Table.Cell>
               <Table.Cell>
                 <Button.Group>
+                  <NavLink to={`/graficas/${row.id}`}>
+                    <Button icon="chart bar outline" color="violet" />
+                  </NavLink>
+
+                  <Button
+                    icon="share alternate"
+                    color="green"
+                    onClick={() => {
+                      setLinkUrl(row);
+                      setVisible(true);
+                    }}
+                  />
                   <Button
                     icon="trash"
                     onClick={() => deletesite(row.id)}
                     color="red"
                   />
-                  <Button icon="pencil" color="teal" />
-                  <Button icon="share alternate" primary />
+
+                  <Button
+                    icon="pencil"
+                    color="teal"
+                    onClick={() => {
+                      setOpen(true);
+                      setLinkUrl(row);
+                    }}
+                  />
                 </Button.Group>
               </Table.Cell>
             </Table.Row>
           ))}
         </Table.Body>
       </Table>
+
+      <FormUrl
+        LinkUrl={LinkUrl}
+        open={open}
+        setOpen={setOpen}
+        title="Actualizar Url"
+      />
     </>
   );
 }

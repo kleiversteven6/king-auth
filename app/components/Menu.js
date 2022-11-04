@@ -15,7 +15,7 @@ export default function MenuComponent() {
           active={activeItem === 'inicio'}
           onClick={handleItemClick}
           as={NavLink}
-          to="./"
+          to="/"
         >
           Inicio
         </Menu.Item>
@@ -25,7 +25,7 @@ export default function MenuComponent() {
           active={activeItem === 'calculadora'}
           onClick={handleItemClick}
           as={NavLink}
-          to="./calculadora"
+          to="/calculadora"
         >
           Calculadora
         </Menu.Item>
@@ -35,7 +35,7 @@ export default function MenuComponent() {
           active={activeItem === 'generar'}
           onClick={handleItemClick}
           as={NavLink}
-          to="./generar"
+          to="/generar"
         >
           Generar Qr
         </Menu.Item>
@@ -44,7 +44,7 @@ export default function MenuComponent() {
           active={activeItem === 'validar'}
           onClick={handleItemClick}
           as={NavLink}
-          to="./validar"
+          to="/validar"
         >
           Validar Qr
         </Menu.Item>
@@ -53,7 +53,7 @@ export default function MenuComponent() {
           active={activeItem === 'acortar'}
           onClick={handleItemClick}
           as={NavLink}
-          to="./acortar"
+          to="/acortar"
         >
           Short Urls
         </Menu.Item>
