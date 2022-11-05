@@ -13,12 +13,23 @@ export default function ShortUrls() {
     const querySnapshot = await getWebsites();
     // onGetLinks((querySnapshot) => {
     const docs = [];
+    let element = {};
     querySnapshot.forEach(doc => {
-      docs.push({ ...doc.data(), id: doc.id });
+      element = doc.data();
+      docs.push({
+        ...{
+          DateTime: element.DateTime,
+          url: element.url,
+          short: element.short,
+          cliks: element.cliks,
+          id: doc.id,
+        },
+      });
     });
+    console.log(docs);
 
-    setWebsites(docs);
     // });
+    setWebsites(docs);
   };
   const deletesite = id => {
     deleteWebsite(id);

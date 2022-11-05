@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 /* eslint-disable react/prop-types */
 import React from 'react';
 import { Icon, Image, Input, Menu } from 'semantic-ui-react';
@@ -7,7 +8,7 @@ export default function TopMenu({ setVisible, visible }) {
     <Menu fixed="top" className="top-menu">
       <Menu.Item className="logo-space-menu-item">
         <div className="display-inline logo-space">
-          <p>Pack King</p>
+          <p>King's Pack</p>
         </div>
       </Menu.Item>
 
@@ -27,7 +28,7 @@ export default function TopMenu({ setVisible, visible }) {
               size="mini"
               src="https://react.semantic-ui.com/images/avatar/large/jenny.jpg"
             />
-            Albiona
+            King
           </div>
         </Menu.Item>
       </Menu.Menu>
