@@ -41,6 +41,31 @@ export const getWebsite = id => getDoc(doc(db, collectionName, id));
 export const updateClicksCountries = (id, updatedFields) =>
   updateDoc(doc(db, collectionName, id), updatedFields);
 
+export const getGraphLineInfo = async id => {
+  let thisYear = new Date(Date.now());
+  thisYear = thisYear.getFullYear(); // Contiene año actual
+
+  const querySnapshot = await getDocs(
+    query(
+      collection(db, collectionlog),
+      where('idurl', '==', id),
+      where('DateTime', '>', new Date(`1/1/${thisYear}`)),
+      where('DateTime', '<', new Date(`12/31/${thisYear}`)),
+      orderBy('DateTime'),
+    ),
+  );
+
+  const month = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+  querySnapshot.forEach(data => {
+    const datos = data.data();
+    const fecha = new Date(datos.DateTime.toDate().toString());
+
+    month[fecha.getMonth()] += 1;
+  });
+
+  return month;
+};
+
 export const getGroupCountry = async id => {
   const querySnapshot = await getDocs(
     query(
@@ -99,10 +124,12 @@ export const getGroupCountry = async id => {
       return b.toLocaleDateString();
     }
 
+    // Dias de las semanas + Asignar Semanas ------------------------------------------------
+    // Semanas
     const week = getWeek() + 1;
     const weekFound = weeks.find(obj => obj.drilldown === week);
 
-    // Dias de las semanas + Asignar Semanas
+    // Dias
     const dayList = [
       [`Domingo <br/> ${getWeekLength('end', 6)}`, 0],
       [`Lunes <br/> ${getWeekLength('end', 5)}`, 0],
@@ -114,8 +141,9 @@ export const getGroupCountry = async id => {
     ];
 
     if (weekFound) {
-      weekFound.y += 1;
+      weekFound.y += 1; // Semanas++
 
+      // Dias++
       let k = 0;
       const drillFound = drill.find(obj => obj.id === week);
       drillFound.data.forEach(obj => {
@@ -123,6 +151,7 @@ export const getGroupCountry = async id => {
         k += 1;
       });
     } else {
+      // Nueva Semana
       let dete = [];
 
       if (getWeek() !== 0) dete = dayList;
@@ -137,8 +166,8 @@ export const getGroupCountry = async id => {
         if (obj[0] === dayList[fecha.getDay()][0]) dete[k][1] += 1;
         k += 1;
       });
-      console.log(dete);
 
+      // Asignar Valores
       const w = {
         drilldown: week,
         y: 1,
@@ -160,11 +189,11 @@ export const getGroupCountry = async id => {
   console.log(drill);
 
   // Retornar Valores de la Funcion -------------------------------------------------------
-  const ready = [];
+  const mapamundi = [];
   countries.forEach(data => {
     const propertyNames = Object.values(data);
-    ready.push([...propertyNames]);
+    mapamundi.push([...propertyNames]);
   });
 
-  return { mapamundi: ready, line: weeks, drill };
+  return { mapamundi, weeks, drill };
 };
