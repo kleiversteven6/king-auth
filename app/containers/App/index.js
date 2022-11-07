@@ -6,7 +6,7 @@
  * contain code that should be seen on all pages. (e.g. navigation bar)
  *
  */
-import { Container, Grid, Menu, Segment, Sidebar } from 'semantic-ui-react';
+import { Container, Menu, Segment, Sidebar } from 'semantic-ui-react';
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 
@@ -32,84 +32,51 @@ export default function App() {
   return (
     <>
       <GlobalStyle />
-      <Grid>
-        {url[1] !== 'url' && (
-          <Grid.Row>
-            <Grid.Column>
-              <TopMenu setVisible={setVisible} visible={visible} />
-            </Grid.Column>
-          </Grid.Row>
-        )}
+      {url[1] !== 'url' && (
+        <TopMenu setVisible={setVisible} visible={visible} />
+      )}
 
-        <Grid.Row style={{ top: '46px' }}>
-          <Grid.Column>
-            <Sidebar.Pushable
-              as={Segment}
-              style={{
-                minHeight: '100vh',
-                flexFlow: 'column nowrap',
-              }}
-            >
-              {url[1] !== 'url' && (
-                <Grid.Row>
-                  <Grid.Column>
-                    <Sidebar
-                      as={Menu}
-                      animation="overlay"
-                      icon="labeled"
-                      inverted
-                      onHide={() => setVisible(false)}
-                      vertical
-                      visible={visible}
-                      width="thin"
-                    >
-                      <MenuComponent />
-                    </Sidebar>
-                  </Grid.Column>
-                </Grid.Row>
-              )}
-              <Grid.Row>
-                <Grid.Column>
-                  <Container fluid>
-                    <Container textAlign="center" style={{ margin: '40px' }}>
-                      <Switch>
-                        <Route exact path="/" component={HomePage} />
-                        <Route
-                          exact
-                          path="/calculadora"
-                          component={CalculatePage}
-                        />
-                        <Route exact path="/generar" component={GenerateQr} />
-                        <Route exact path="/validar" component={ValidateQr} />
+      <Sidebar.Pushable
+        as={Segment}
+        style={{
+          minHeight: '100vh',
+          flexFlow: 'column nowrap',
+          top: '9vh',
+        }}
+      >
+        <Sidebar
+          as={Menu}
+          animation="overlay"
+          icon="labeled"
+          inverted
+          onHide={() => setVisible(false)}
+          vertical
+          visible={visible}
+          width="thin"
+        >
+          <MenuComponent />
+        </Sidebar>
+        <Sidebar.Pusher>
+          <Container fluid>
+            <Container textAlign="center" style={{ margin: '40px' }}>
+              <Switch>
+                <Route exact path="/" component={HomePage} />
+                <Route exact path="/calculadora" component={CalculatePage} />
+                <Route exact path="/generar" component={GenerateQr} />
+                <Route exact path="/validar" component={ValidateQr} />
 
-                        <Route
-                          exact
-                          path="/graficas"
-                          component={GraphicsPage}
-                        />
-                        <Route
-                          exact
-                          path="/graficas/:id"
-                          component={GraphicsPage}
-                        />
+                <Route exact path="/graficas" component={GraphicsPage} />
+                <Route exact path="/graficas/:id" component={GraphicsPage} />
 
-                        <Route exact path="/acortar" component={ShortUrls} />
-                        <Route
-                          exact
-                          path="/graficas/:id"
-                          component={GraphicsPage}
-                        />
-                        <Route exact path="/url/:short" component={UrlPage} />
-                        <Route component={NotFoundPage} />
-                      </Switch>
-                    </Container>
-                  </Container>
-                </Grid.Column>
-              </Grid.Row>
-            </Sidebar.Pushable>
-          </Grid.Column>
-        </Grid.Row>
-      </Grid>
+                <Route exact path="/acortar" component={ShortUrls} />
+                <Route exact path="/graficas/:id" component={GraphicsPage} />
+                <Route exact path="/url/:short" component={UrlPage} />
+                <Route component={NotFoundPage} />
+              </Switch>
+            </Container>
+          </Container>
+        </Sidebar.Pusher>
+      </Sidebar.Pushable>
     </>
   );
 }
