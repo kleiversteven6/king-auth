@@ -6,7 +6,12 @@
  */
 
 import React from 'react';
+import Dados from '../../components/Dados';
 
 export default function HomePage() {
-  return <h1>Inicio!</h1>;
+  return (
+    <>
+      <Dados />
+    </>
+  );
 }
