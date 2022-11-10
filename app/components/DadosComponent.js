@@ -1,19 +1,18 @@
-import React, { useEffect } from 'react';
-import { Button, Container, Grid, GridColumn } from 'semantic-ui-react';
-// eslint-disable-next-line import/no-unresolved
+/* eslint-disable import/no-unresolved */
+import React, { useEffect, useState } from 'react';
+import { Container, Form, Grid, GridColumn } from 'semantic-ui-react';
 import DiceAnimate from './dice';
+
+let Box = {};
 export default function DadosComponent() {
-  let Box = {};
   useEffect(() => {
     Box = new DiceAnimate('#dicebox');
     Box.init();
   }, []);
-
-  const RollBack = () => {
-    const response = Box.roll();
-    response.forEach(element => {
-      console.log(element.value);
-    });
+  const [bet, setBet] = useState('');
+  const RollBack = async () => {
+    const response = await Box.roll().then(r => r);
+    console.log(response);
   };
   return (
     <>
@@ -22,9 +21,17 @@ export default function DadosComponent() {
         <Grid celled>
           <Grid.Row>
             <GridColumn width={2}>
-              <Button basic color="green" onClick={() => RollBack()}>
-                Jugar
-              </Button>
+              <Form onSubmit={() => RollBack()}>
+                <Form.Input
+                  type="number"
+                  value={bet}
+                  label="Apuesta"
+                  onChange={e => setBet(e.target.value)}
+                />
+                <Form.Button basic color="green">
+                  Jugar
+                </Form.Button>
+              </Form>
             </GridColumn>
             <GridColumn width={14}>
               <Container
