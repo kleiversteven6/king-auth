@@ -24370,6 +24370,13 @@ const Ps = {
       values: [1, 6],
       scale: 0.9,
     },
+    dking: {
+      name: 'King Deportes',
+      type: 'd6',
+      labels: ['K', 'D', 'K', 'D', 'K', 'D'],
+      values: [1, 6],
+      scale: 0.9,
+    },
     dpip: {
       name: 'Six-Sided Dice (Pips)',
       type: 'd6',

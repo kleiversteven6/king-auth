@@ -65,7 +65,6 @@
   },
   "dependencies": {
     "@3d-dice/dice-box": "^1.0.5",
-    "@3d-dice/dice-box-threejs": "^0.0.12",
     "@babel/polyfill": "7.4.3",
     "@react-three/cannon": "^6.5.0",
     "@react-three/fiber": "^8.9.1",

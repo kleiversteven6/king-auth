@@ -9,6 +9,7 @@ export default class Animacion {
         background: '#C00109',
         foreground: '#fff',
         texture: 'stainedglass',
+        material: 'wood',
       },
       light_intensity: 1.6,
       gravity_multiplier: 300,
@@ -27,16 +28,15 @@ export default class Animacion {
       .then(() => {
         // give code sandbox a chance to load up
         setTimeout(() => {
-          this.roll();
+          this.Box.roll(`2dking@1,2`);
           // Box.roll("1d2+1d4+1d6+1d8+1d10+1d12+1d20+1d100");
         }, 1000);
       })
       .catch(e => console.error(e));
   }
 
-  async roll() {
-    const resp = await this.Box.roll(`5dpip`).then(r => r);
-
+  async roll(x) {
+    const resp = await this.Box.roll(`${x}dpip`).then(r => r);
     return resp;
   }
 }
