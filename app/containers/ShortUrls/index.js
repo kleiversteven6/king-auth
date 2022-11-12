@@ -26,8 +26,6 @@ export default function ShortUrls() {
         },
       });
     });
-    console.log(docs);
-
     // });
     setWebsites(docs);
   };

@@ -8,28 +8,14 @@ import SocialComponent from '../../components/Social';
 import GraphicLine from '../../components/GraphicLine';
 import GraphicMonth from '../../components/GraphicMonth';
 import Mapamundi from '../../components/mapamundi';
-import {
-  getWebsite,
-  getGroupCountry,
-  getGraphLineInfo,
-} from '../../firebase/api';
+import { getGroupCountry, getGraphLineInfo } from '../../firebase/api';
 // import { getNavigator } from '../../services/services';
 
 export default function GraphicsPage({ match }) {
-  const [data, setData] = useState({});
   const [database, setDatabase] = useState({});
   const [detebase, setDetebase] = useState({});
   const [ditibase, setDitibase] = useState({});
   const [dotobase, setDotobase] = useState({});
-
-  const getLink = async () => {
-    const querySnapshot = await getWebsite(match.params.id);
-
-    const dete = querySnapshot.data();
-    setData(dete);
-
-    console.log(data);
-  };
 
   const test = async () => {
     const querySnapshot = await getGroupCountry(match.params.id);
@@ -46,7 +32,7 @@ export default function GraphicsPage({ match }) {
 
   const panes = [
     {
-      menuItem: { content: 'Estadísticas', icon: 'chart area' },
+      menuItem: { content: 'Estadísticas', icon: 'chart area', key: 1 },
       render: () => (
         <Tab.Pane key={1}>
           <GraphicLine data={detebase} drill={ditibase} short={short} />
@@ -54,7 +40,7 @@ export default function GraphicsPage({ match }) {
       ),
     },
     {
-      menuItem: { content: 'Ubicación', icon: 'map marker alternate' },
+      menuItem: { content: 'Ubicación', icon: 'map marker alternate', key: 2 },
       render: () => (
         <Tab.Pane key={2}>
           <Mapamundi data={database} />
@@ -62,7 +48,7 @@ export default function GraphicsPage({ match }) {
       ),
     },
     {
-      menuItem: { content: 'Estadística Mensual', icon: 'chart line' },
+      menuItem: { content: 'Estadística Mensual', icon: 'chart line', key: 3 },
       render: () => (
         <Tab.Pane>
           <GraphicMonth data={dotobase} short={short} />
@@ -70,7 +56,7 @@ export default function GraphicsPage({ match }) {
       ),
     },
     {
-      menuItem: { content: 'Compartir', icon: 'share alternate' },
+      menuItem: { content: 'Compartir', icon: 'share alternate', key: 4 },
       render: () => (
         <Tab.Pane key={3}>
           <ShareComponent short={short} stats={stats} url={url} />
@@ -81,7 +67,6 @@ export default function GraphicsPage({ match }) {
   ];
 
   useEffect(() => {
-    getLink();
     test();
   }, []);
 

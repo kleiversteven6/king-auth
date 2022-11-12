@@ -185,9 +185,6 @@ export const getGroupCountry = async id => {
     }
   });
 
-  console.log(weeks);
-  console.log(drill);
-
   // Retornar Valores de la Funcion -------------------------------------------------------
   const mapamundi = [];
   countries.forEach(data => {

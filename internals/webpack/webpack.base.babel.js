@@ -59,7 +59,14 @@ module.exports = options => ({
         ],
       },
       {
-        test: /\.(jpg|png|gif)$/,
+        test: /\.mp3$/,
+        loader: 'file-loader',
+        query: {
+          name: 'static/media/[name].[hash:8].[ext]',
+        },
+      },
+      {
+        test: /\.(jpg|png|gif|webp)$/,
         use: [
           {
             loader: 'url-loader',

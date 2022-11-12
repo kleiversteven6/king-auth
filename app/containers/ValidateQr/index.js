@@ -29,6 +29,7 @@ export default function ValidateQr() {
   useEffect(() => {}, []);
   return (
     <Container>
+      <h1>Validar codigo Qr</h1>
       <Grid>
         <Grid.Column width={4}>
           <Image src={image} size="big" />
