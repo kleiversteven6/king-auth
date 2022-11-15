@@ -35,8 +35,8 @@ export default class Animacion {
       .catch(e => console.error(e));
   }
 
-  async roll(x) {
-    const resp = await this.Box.roll(`${x}dpip`).then(r => r);
+  async roll(x, y) {
+    const resp = await this.Box.roll(`${x}dpip@${y}`).then(r => r);
     return resp;
   }
 }
