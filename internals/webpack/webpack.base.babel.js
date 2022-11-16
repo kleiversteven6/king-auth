@@ -59,7 +59,7 @@ module.exports = options => ({
         ],
       },
       {
-        test: /\.mp3$/,
+        test: /\.(mp3|ogg)$/,
         loader: 'file-loader',
         query: {
           name: 'static/media/[name].[hash:8].[ext]',

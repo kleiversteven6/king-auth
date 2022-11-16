@@ -24,6 +24,7 @@ import ShortUrls from '../ShortUrls';
 import UrlPage from '../UrlPage';
 import TopMenu from '../../components/TopMenu';
 import DicePage from '../DicePage';
+import GameBingo from '../Bingo';
 
 export default function App() {
   const [visible, setVisible] = React.useState(false);
@@ -67,6 +68,7 @@ export default function App() {
                 <Route exact path="/generar" component={GenerateQr} />
                 <Route exact path="/validar" component={ValidateQr} />
                 <Route exact path="/dados" component={DicePage} />
+                <Route exact path="/bingo" component={GameBingo} />
 
                 <Route exact path="/graficas" component={GraphicsPage} />
                 <Route exact path="/graficas/:id" component={GraphicsPage} />
