@@ -3,7 +3,7 @@ import DiceBox from './dice-box-theree';
 // set configurations when invoking the class
 
 export default class Animacion {
-  constructor(element) {
+  constructor(element, x = 100) {
     this.Box = new DiceBox(element, {
       theme_customColorset: {
         background: '#C00109',
@@ -14,7 +14,7 @@ export default class Animacion {
       light_intensity: 1.6,
       gravity_multiplier: 300,
       color_spotLight: '#C00109',
-      baseScale: 100,
+      baseScale: x,
       strength: 6,
       sounds: true,
       onRollComplete: results => {

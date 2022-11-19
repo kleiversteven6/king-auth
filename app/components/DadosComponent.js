@@ -2,18 +2,23 @@
 import React, { useEffect, useState } from 'react';
 import {
   Button,
+  Checkbox,
   Container,
   Divider,
-  Form,
   Grid,
-  GridColumn,
+  Icon,
+  Input,
+  Label,
   Message,
+  Modal,
   Segment,
+  Select,
 } from 'semantic-ui-react';
 import DiceAnimate from './dice';
 import img from '../../public/assets/maps/kdtable.jpg';
+import './Dados.css';
 
-let Box = {};
+let Box = null;
 const MINIMO = 10;
 
 export default function DadosComponent() {
@@ -23,30 +28,31 @@ export default function DadosComponent() {
     state: true,
     bet: false,
     total: false,
-    par: false,
-    impar: false,
+    parImpar: false,
   }); // Colores de error de los Inputs
 
   const [money, setMoney] = useState('');
   const [nDice, setNDice] = useState('2');
-  const [betType, setBetType] = useState('total');
-  const [bet, setBet] = useState([5, '-1', '']); // [ 0: Total | 1: Par | 2: Impar ]
+  const [betType, setBetType] = useState('total'); // ('par/impar'); ('total');
+  const [bet, setBet] = useState([5, '¿', '?']); // [ 0: Total | 1: Par | 2: Impar ]
 
   const [resp, setResp] = useState({ total: '0', par: '', impar: '' });
-  const [win, setWin] = useState('Aqui apareceran sus resultados.');
-  const [diceKD, setDiceKD] = useState(true);
+  const [win, setWin] = useState({ show: false, msg: '', dados: '' });
+  const [betDone, setBetDone] = useState(false);
 
   // Lanzar Dados
   async function RollBack() {
+    setBetDone(false);
     if (validate(true)) {
       updateSaldo(user.saldo - money);
-      setWin('Los dados se han lanzado...');
+      setWin({ show: false, msg: '', dados: '' });
       setResp({ total: '?', par: '?', impar: '?' });
 
       const dados = await Box.roll(nDice).then(r => r);
 
       isWinner(dados);
-      setDiceKD(false);
+      setModalResp();
+      setBetDone(true);
     }
   }
 
@@ -54,11 +60,11 @@ export default function DadosComponent() {
   function isWinner(dados) {
     switch (betType) {
       case 'total': {
-        setResp({ total: dados.total });
+        resp.total = dados.total;
 
         if (Number(dados.total) === Number(bet[0])) {
           const a = money * 3 - money + user.saldo;
-          setWin(`Prediccion Perfecta! +${money * 3}$`);
+          win.msg = `Prediccion Perfecta! +${money * 3}$`;
           updateSaldo(a);
           break;
         }
@@ -67,12 +73,12 @@ export default function DadosComponent() {
           Number(dados.total) === Number(bet[0]) - 1 ||
           Number(dados.total) === Number(bet[0]) + 1
         ) {
-          setWin(`Prediccion Aproximada. +${money * 1}$`);
+          win.msg = `Prediccion Aproximada. +${money * 1}$`;
           updateSaldo(user.saldo);
           break;
         }
 
-        setWin('Prediccion incorrecta.');
+        win.msg = 'Prediccion incorrecta.';
         break;
       }
 
@@ -85,13 +91,14 @@ export default function DadosComponent() {
           else impar += 1;
         });
 
-        setResp({ par, impar });
+        resp.par = par;
+        resp.impar = impar;
 
         if (Number(bet[1]) === par && Number(bet[2]) === impar) {
           const a = money * 3 - money + user.saldo;
-          setWin(`Prediccion Perfecta! +${money * 3}$`);
+          win.msg = `Prediccion Perfecta! +${money * 3}$`;
           updateSaldo(a);
-        } else setWin('Prediccion incorrecta.');
+        } else win.msg = 'Prediccion incorrecta.';
 
         break;
       }
@@ -103,6 +110,16 @@ export default function DadosComponent() {
 
   function updateSaldo(amount) {
     setUser({ saldo: amount });
+  }
+
+  function setModalResp() {
+    const a = win.msg;
+    let b;
+
+    if (betType === 'total') b = `El total es ${resp.total}`;
+    else b = `Pares: ${resp.par} | Impares: ${resp.impar}`;
+
+    setWin({ show: true, msg: a, dados: b });
   }
 
   // Validacion
@@ -117,12 +134,12 @@ export default function DadosComponent() {
       err.push(`• El monto minimo a apostar debe ser mayor a ${MINIMO}.`);
       inputs.bet = true;
     } else if (user.saldo - money < 0) {
-      err.push('• El monto a apostar no puede ser menor que su saldo.');
+      err.push('• El monto a apostar no puede ser mayor que su saldo.');
       inputs.bet = true;
     } else inputs.bet = false;
 
     // Validar Apuesta a Total
-    if (betType === 'total') {
+    if (x && betType === 'total') {
       inputs.total = false;
 
       switch (nDice) {
@@ -173,16 +190,12 @@ export default function DadosComponent() {
 
     // Validar Apuesta Par / Impar
     if (betType === 'par/impar') {
-      if (x && bet[1] === '?') {
+      if (x && bet[1] === '¿') {
         err.push(
           '• Debe seleccionar una apuesta Par e Impar para lanzar los dados.',
         );
-        inputs.par = true;
-        inputs.impar = true;
-      } else {
-        inputs.par = false;
-        inputs.impar = false;
-      }
+        inputs.parImpar = true;
+      } else inputs.parImpar = false;
     }
 
     // Todo chevere.
@@ -191,8 +204,7 @@ export default function DadosComponent() {
         state: true,
         bet: false,
         total: false,
-        par: false,
-        impar: false,
+        parImpar: false,
       });
 
       setErrorMsg('');
@@ -226,219 +238,427 @@ export default function DadosComponent() {
 
   // Inicializar
   useEffect(() => {
-    Box = new DiceAnimate('#dicebox');
+    let diceSize;
+
+    if (window.innerWidth <= 991) diceSize = 65;
+    else diceSize = 100;
+
+    Box = new DiceAnimate('#dicebox', diceSize);
     Box.init();
   }, []);
 
-  // Variables que honestamente me gustaria que no estuvieran aqui. Muchas gracias eslint.
-  function setParImpar(e) {
-    if (e === '-1') setBet([5, '?', ' ']);
-    else setBet([5, e, nDice - e]);
-  }
-
+  // Variables que honestamente me gustaria que no estuvieran aqui.
+  // Muchas gracias eslint.
   useEffect(() => {
-    setBet([bet[0], '?', ' ']);
+    setBet([bet[0], '¿', '?']);
   }, [nDice]);
-
-  const parErrorStyle = {
-    background: '#fff6f6',
-    borderColor: '#e0b4b4',
-    color: '#9f3a38',
-  };
 
   return (
     <>
-      <Container fluid>
+      <Container>
         <h1>
           Dados en <i>4K</i>
         </h1>
+
         <Divider />
-        <h3>{win}</h3>
         {errorMsg}
-        <Grid celled>
-          <Grid.Row>
-            {/* <== */}
-            <GridColumn width={2}>
-              <Form>
-                <Button.Group vertical>
+
+        <Grid className="DadosComponent_TBL_txt" celled>
+          {/* <== */}
+          <Grid.Column computer={2} mobile={16}>
+            <Grid.Row className="DadosComponent_BS0">
+              <Grid.Column>
+                <Button.Group className="DadosComponent_BG" vertical>
                   <Button content="Saldo" size="mini" />
                   <Button
                     basic
+                    size="mini"
                     color="grey"
                     icon="dollar"
                     content={user.saldo}
-                    size="mini"
                   />
                 </Button.Group>
 
-                <Divider />
-                <Button
-                  icon="money"
-                  content="Dinero a Apostar"
-                  labelPosition="left"
+                <Divider className="DadosComponent_Divider" />
+                <Button.Group
+                  className="DadosComponent_BG"
+                  vertical
                   size="mini"
-                />
-                <Segment secondary>
-                  <Form.Input
-                    error={inputs.bet}
-                    type="text"
-                    value={money}
-                    onChange={(e, { value }) => value >= 0 && setMoney(value)}
+                >
+                  <Button
+                    size="mini"
+                    icon="money"
+                    labelPosition="left"
+                    content="Dinero a Apostar"
+                    style={{ height: '36px' }}
                   />
-                </Segment>
 
-                <Divider />
+                  <Button
+                    basic
+                    negative={inputs.bet}
+                    color="grey"
+                    style={{ height: '36px' }}
+                  >
+                    <Icon
+                      size="large"
+                      name="dollar"
+                      style={{ float: 'left' }}
+                    />
+                    <Input
+                      transparent
+                      type="text"
+                      size="huge"
+                      value={money}
+                      error={inputs.bet}
+                      onChange={(e, { value }) => value >= 0 && setMoney(value)}
+                      style={{ width: '50px' }}
+                    />
+                  </Button>
+                </Button.Group>
+              </Grid.Column>
+            </Grid.Row>
+
+            <Divider />
+            <Grid.Row>
+              <Button.Group
+                className="DadosComponent_FullWidth"
+                vertical
+                size="mini"
+              >
                 <Button
+                  size="mini"
                   icon="th list"
                   content="Cantidad de Dados"
                   labelPosition="left"
-                  size="mini"
+                  style={{ width: '100%' }}
                 />
-                <Segment secondary>
-                  <Form.Radio
+
+                <Button basic color="grey">
+                  <Checkbox
+                    radio
                     label="2"
                     value="2"
                     checked={nDice === '2'}
                     onChange={(e, { value }) => setNDice(value)}
                   />
-                  <Form.Radio
+
+                  <br className="DadosComponent_MobileHide" />
+                  <span
+                    className="DadosComponent_PcHide"
+                    style={{ fontSize: '1.2rem', padding: '0 2% 0 2%' }}
+                  >
+                    |
+                  </span>
+
+                  <Checkbox
+                    radio
                     label="3"
                     value="3"
                     checked={nDice === '3'}
                     onChange={(e, { value }) => setNDice(value)}
                   />
-                  <Form.Radio
+
+                  <br className="DadosComponent_MobileHide" />
+                  <span
+                    className="DadosComponent_PcHide"
+                    style={{ fontSize: '1.2rem', padding: '0 2% 0 2%' }}
+                  >
+                    |
+                  </span>
+
+                  <Checkbox
+                    radio
                     label="4"
                     value="4"
                     checked={nDice === '4'}
                     onChange={(e, { value }) => setNDice(value)}
                   />
-                  <Form.Radio
+
+                  <br className="DadosComponent_MobileHide" />
+                  <span
+                    className="DadosComponent_PcHide"
+                    style={{ fontSize: '1.2rem', padding: '0 2% 0 2%' }}
+                  >
+                    |
+                  </span>
+
+                  <Checkbox
+                    radio
                     label="5"
                     value="5"
                     checked={nDice === '5'}
                     onChange={(e, { value }) => setNDice(value)}
                   />
-                </Segment>
+                </Button>
+              </Button.Group>
+            </Grid.Row>
 
-                <Divider />
-                <Form.Button
-                  basic
-                  color={inputs.state ? 'green' : 'red'}
-                  content="Jugar"
-                  size="big"
-                  onClick={() => RollBack()}
-                />
-              </Form>
-            </GridColumn>
+            <Divider className="DadosComponent_MobileHide" />
+            <Button
+              className="DadosComponent_MobileHide"
+              basic
+              size="big"
+              color="green"
+              content="Jugar"
+              negative={!inputs.state}
+              onClick={() => RollBack()}
+            />
+          </Grid.Column>
 
-            {/* |==| */}
-            <GridColumn width={12}>
-              <div
-                id="dicebox"
-                style={{
-                  width: '815px',
-                  height: '550px',
-                  border: 'solid 1px',
-                  backgroundImage: `url(${img})`,
-                }}
-              />
-            </GridColumn>
-
-            {/* ==> */}
-            <GridColumn width={2}>
-              <Form>
+          {/* |==| */}
+          <Grid.Column computer={12} mobile={16}>
+            <div
+              id="dicebox"
+              style={{
+                backgroundImage: `url(${img})`,
+              }}
+            >
+              {betDone && (
                 <Button
-                  icon="wrench"
-                  content="Tipo de Apuesta"
-                  labelPosition="left"
-                  size="mini"
+                  className="DadosComponent_ModalButton"
+                  primary
+                  floated="left"
+                  content="Ver Resultados"
+                  onClick={() =>
+                    setWin({ show: true, msg: win.dados, dados: win.msg })
+                  }
                 />
-                <Segment secondary>
-                  <Form.Group>
-                    <Form.Radio
-                      inline
-                      label="Par / Impar"
-                      value="par/impar"
-                      checked={betType === 'par/impar'}
-                      onChange={(e, { value }) => setBetType(value)}
-                    />
-                  </Form.Group>
-                  <Form.Group>
-                    <Form.Radio
-                      label="Total"
-                      value="total"
-                      checked={betType === 'total'}
-                      onChange={(e, { value }) => setBetType(value)}
-                    />
-                  </Form.Group>
-                </Segment>
+              )}
+            </div>
 
-                <Divider />
-                {betType === 'total' ? (
-                  <>
+            <Modal
+              className="DadosComponent_ModalFix"
+              basic
+              size="mini"
+              centered={false}
+              open={win.show}
+              mountNode={document.getElementById('dicebox')}
+              onClose={() =>
+                setWin({ show: false, msg: win.dados, dados: win.msg })
+              }
+              dimmer={{
+                className: 'DadosComponent_ModalFix',
+              }}
+              content={
+                <Segment secondary>
+                  <h1>Resultados</h1>
+                  <p>{win.dados}</p>
+                  <p>{win.msg}</p>
+                </Segment>
+              }
+            />
+          </Grid.Column>
+
+          {/* ==> */}
+          <Grid.Column computer={2} mobile={16}>
+            <Button
+              className="DadosComponent_PcHide"
+              size="massive"
+              color="green"
+              content="Jugar"
+              negative={!inputs.state}
+              onClick={() => RollBack()}
+            />
+            <Divider className="DadosComponent_PcHide" />
+
+            <Button.Group
+              className="DadosComponent_FullWidth"
+              vertical
+              size="mini"
+            >
+              <Button
+                icon="wrench"
+                content="Tipo de Apuesta"
+                labelPosition="left"
+              />
+
+              <Select
+                button
+                compact
+                defaultValue="total"
+                onChange={(e, { value }) => setBetType(value)}
+                options={[
+                  { key: 't', value: 'total', text: 'Total' },
+                  { key: 'p/i', value: 'par/impar', text: 'Par / Impar' },
+                ]}
+                style={{ height: '2.6rem' }}
+              />
+            </Button.Group>
+
+            <Divider />
+            {betType === 'total' ? (
+              <Button.Group
+                className="DadosComponent_FullWidth"
+                vertical
+                size="mini"
+              >
+                <Button
+                  size="mini"
+                  icon="bookmark"
+                  content="Apuesta a Total"
+                  labelPosition="left"
+                />
+
+                <Button
+                  basic
+                  color="grey"
+                  negative={inputs.total}
+                  style={{ height: '36px' }}
+                >
+                  <Icon
+                    name="pencil alternate"
+                    size="large"
+                    style={{ float: 'left' }}
+                  />
+                  <Input
+                    transparent
+                    type="text"
+                    size="huge"
+                    value={bet[0]}
+                    error={inputs.total}
+                    style={{ width: '50px' }}
+                    onChange={e =>
+                      e.target.value <= 99 && setBet([e.target.value, '¿', '?'])
+                    }
+                  />
+                </Button>
+              </Button.Group>
+            ) : (
+              <Grid divided>
+                <Grid.Row>
+                  <Grid.Column width={16}>
                     <Button
-                      icon="bookmark"
-                      content="Apuesta a Total"
-                      labelPosition="left"
+                      className="DadosComponent_FullWidth"
                       size="mini"
-                    />
-                    <Segment secondary>
-                      <Form.Input
-                        error={inputs.total}
-                        type="number"
-                        value={bet[0]}
-                        onChange={e => setBet([e.target.value, '-1', ''])}
-                      />
-                    </Segment>
-                  </>
-                ) : (
-                  <>
-                    <Button
                       icon="bookmark"
                       content="Apuesta a Par / Impar"
                       labelPosition="left"
-                      size="mini"
+                      negative={inputs.parImpar}
                     />
-                    <Segment secondary>
-                      <b>Par</b>
-                      <select
-                        defaultValue={-1}
-                        onChange={e => setParImpar(e.target.value)}
-                        style={inputs.par ? parErrorStyle : {}}
-                      >
-                        <option value={-1}>?</option>
-                        <option value={0}>0</option>
-                        <option value={1}>1</option>
-                        <option value={2}>2</option>
-                        {nDice >= 3 && <option value={3}>3</option>}
-                        {nDice >= 4 && <option value={4}>4</option>}
-                        {nDice >= 5 && <option value={5}>5</option>}
-                      </select>
+                  </Grid.Column>
 
-                      <br />
-                      <b>Impar</b>
-                      <Form.Input
-                        error={inputs.impar}
-                        value={bet[2]}
-                        readOnly
+                  <Grid.Column computer={16} mobile={8}>
+                    <Button
+                      className="DadosComponent_FullWidth"
+                      basic
+                      color="grey"
+                      content="Seleccion de Par"
+                      negative={inputs.parImpar}
+                      style={{ fontSize: '0.9rem' }}
+                    />
+
+                    <Button
+                      className="DadosComponent_FullWidth"
+                      basic
+                      color="grey"
+                    >
+                      <Label.Group className="DadosComponent_PIFix">
+                        <Label
+                          basic
+                          value="0"
+                          onClick={(e, { value }) =>
+                            setBet([5, value, nDice - value])
+                          }
+                        >
+                          0<br />
+                          <Checkbox checked={bet[1] === '0'} />
+                        </Label>
+
+                        <Label
+                          basic
+                          value="1"
+                          onClick={(e, { value }) =>
+                            setBet([5, value, nDice - value])
+                          }
+                        >
+                          1<br />
+                          <Checkbox checked={bet[1] === '1'} />
+                        </Label>
+                      </Label.Group>
+
+                      <Label.Group className="DadosComponent_PIFix">
+                        <Label
+                          basic
+                          value="2"
+                          onClick={(e, { value }) =>
+                            setBet([5, value, nDice - value])
+                          }
+                        >
+                          2<br />
+                          <Checkbox checked={bet[1] === '2'} />
+                        </Label>
+
+                        <br />
+                        {nDice >= 3 && (
+                          <Label
+                            basic
+                            value="3"
+                            onClick={(e, { value }) =>
+                              setBet([5, value, nDice - value])
+                            }
+                          >
+                            3<br />
+                            <Checkbox checked={bet[1] === '3'} />
+                          </Label>
+                        )}
+                      </Label.Group>
+
+                      <Label.Group className="DadosComponent_PIFix">
+                        {nDice >= 4 && (
+                          <Label
+                            basic
+                            value="4"
+                            onClick={(e, { value }) =>
+                              setBet([5, value, nDice - value])
+                            }
+                          >
+                            4<br />
+                            <Checkbox checked={bet[1] === '4'} />
+                          </Label>
+                        )}
+
+                        {nDice >= 5 && (
+                          <Label
+                            basic
+                            value="5"
+                            onClick={(e, { value }) =>
+                              setBet([5, value, nDice - value])
+                            }
+                          >
+                            5<br />
+                            <Checkbox checked={bet[1] === '5'} />
+                          </Label>
+                        )}
+                      </Label.Group>
+                    </Button>
+                  </Grid.Column>
+
+                  <Grid.Column computer={16} mobile={8}>
+                    <Button.Group className="DadosComponent_PItxtFix0" vertical>
+                      <Button
+                        className="DadosComponent_PItxtFix1"
+                        color="vk"
+                        content="Par"
+                        negative={inputs.parImpar}
                       />
-                    </Segment>
-                  </>
-                )}
-              </Form>
-            </GridColumn>
-          </Grid.Row>
-        </Grid>
+                      <Button basic color="grey" content={<b>{bet[1]}</b>} />
+                    </Button.Group>
 
-        {!diceKD &&
-          (betType === 'total' ? (
-            <h1>El total es {resp.total}</h1>
-          ) : (
-            <h1>
-              Pares: {resp.par} | Impares: {resp.impar}
-            </h1>
-          ))}
+                    <Button.Group className="DadosComponent_PItxtFix0" vertical>
+                      <Button
+                        className="DadosComponent_PItxtFix1"
+                        color="orange"
+                        content="Impar"
+                        negative={inputs.parImpar}
+                      />
+                      <Button basic color="grey" content={<b>{bet[2]}</b>} />
+                    </Button.Group>
+                  </Grid.Column>
+                </Grid.Row>
+              </Grid>
+            )}
+          </Grid.Column>
+        </Grid>
       </Container>
     </>
   );
