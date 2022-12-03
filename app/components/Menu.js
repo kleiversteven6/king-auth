@@ -14,7 +14,7 @@ export default function MenuComponent() {
         active={activeItem === 'inicio' && true}
         onClick={handleItemClick}
         as={NavLink}
-        to="/"
+        to="../"
         key={1}
       >
         <Icon name="home" size="big" />
@@ -26,7 +26,7 @@ export default function MenuComponent() {
         active={activeItem === 'calculadora'}
         onClick={handleItemClick}
         as={NavLink}
-        to="/calculadora"
+        to="../calculadora"
         key={2}
       >
         <Icon name="calculator" size="big" />
@@ -38,7 +38,7 @@ export default function MenuComponent() {
         active={activeItem === 'generar'}
         onClick={handleItemClick}
         as={NavLink}
-        to="/generar"
+        to="../generar"
         key={3}
       >
         <Icon name="qrcode" size="big" />
@@ -49,7 +49,7 @@ export default function MenuComponent() {
         active={activeItem === 'validar'}
         onClick={handleItemClick}
         as={NavLink}
-        to="/validar"
+        to="../validar"
         key={4}
       >
         <Icon.Group size="big">
@@ -65,7 +65,7 @@ export default function MenuComponent() {
         active={activeItem === 'acortar'}
         onClick={handleItemClick}
         as={NavLink}
-        to="/acortar"
+        to="../acortar"
         key={5}
       >
         <Icon name="unlink" />

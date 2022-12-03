@@ -56,7 +56,7 @@ export default function LinkUrls({ websites, deletesite }) {
           {websites.map(row => (
             <Table.Row key={row.id}>
               <Table.Cell>
-                <a href={`/url/${row.short}`} target="_blank">
+                <a href={`./url/${row.short}`} target="_blank">
                   {row.short}
                 </a>
               </Table.Cell>
@@ -66,7 +66,7 @@ export default function LinkUrls({ websites, deletesite }) {
               <Table.Cell>{row.cliks} </Table.Cell>
               <Table.Cell>
                 <Button.Group>
-                  <NavLink to={`/graficas/${row.id}`}>
+                  <NavLink to={`./graficas/${row.id}`}>
                     <Button icon="chart bar outline" basic color="violet" />
                   </NavLink>
 
