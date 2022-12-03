@@ -23,6 +23,7 @@ import ShortUrls from '../ShortUrls';
 
 import UrlPage from '../UrlPage';
 import TopMenu from '../../components/TopMenu';
+import DicePage from '../DicePage';
 
 export default function App() {
   const [visible, setVisible] = React.useState(false);
@@ -53,6 +54,7 @@ export default function App() {
           vertical
           visible={visible}
           width="thin"
+          fi
         >
           <MenuComponent />
         </Sidebar>
@@ -64,6 +66,7 @@ export default function App() {
                 <Route exact path="/calculadora" component={CalculatePage} />
                 <Route exact path="/generar" component={GenerateQr} />
                 <Route exact path="/validar" component={ValidateQr} />
+                <Route exact path="/dados" component={DicePage} />
 
                 <Route exact path="/graficas" component={GraphicsPage} />
                 <Route exact path="/graficas/:id" component={GraphicsPage} />

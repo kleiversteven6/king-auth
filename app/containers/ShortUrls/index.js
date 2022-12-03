@@ -35,7 +35,7 @@ export default function ShortUrls() {
   };
   useEffect(() => {
     getLinks();
-  }, [websites]);
+  }, []);
 
   const [open, setOpen] = useState(false);
   return (
