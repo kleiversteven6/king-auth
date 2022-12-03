@@ -4,14 +4,15 @@ import {
   Button,
   Container,
   Divider,
-  Form,
   Grid,
   GridColumn,
   Icon,
   Input,
   Segment,
+  Select,
   Table,
 } from 'semantic-ui-react';
+import './CalculatePage.css';
 
 export default function CalculatePage() {
   const [bet, setBet] = useState('');
@@ -115,7 +116,6 @@ export default function CalculatePage() {
         else break;
       }
     }
-
     if (div < div2) ok = `${x}/${y}`;
     else ok = `${x2}/${y2}`;
 
@@ -253,121 +253,191 @@ export default function CalculatePage() {
       ganancia: Math.round(t - (d > 1 ? bet : 0)),
       total: Math.round(t),
     });
-  }, [dummy, quotes]);
+  }, [dummy, quotes, bet]);
+
+  // TE ODIO ESLINT EN SERIO
+  function checkMobile() {
+    if (window.innerWidth <= 991) return true;
+    return false;
+  }
+
+  function checkTablet() {
+    if (window.innerWidth > 991 && window.innerWidth < 1200) return true;
+    return false;
+  }
 
   return (
     <>
       <Container>
-        <h1>Calculadora en 4K</h1>
+        <h1>
+          Calculadora en <i>8K</i>
+        </h1>
+
+        {/* ↑↑↑↑↑ */}
         <Segment secondary raised>
-          <Grid relaxed="very" stackable>
-            <Grid.Row>
-              <Grid.Column width={5}>
-                <Form style={{ textAlign: 'center' }}>
-                  Formato
-                  <select
-                    id={0}
-                    defaultValue="d"
-                    onChange={e => setFormat(e.target.value)}
-                  >
-                    <option value="d">Decimal</option>
-                    <option value="a">Americano</option>
-                    <option value="f">Fraccion</option>
-                  </select>
-                  Apuesta
-                  <Form.Input
+          <Grid relaxed="very">
+            {/* |<==| */}
+            <Grid.Column verticalAlign="middle" computer={5} mobile={16}>
+              <Button.Group vertical={checkMobile() || checkTablet()}>
+                <Button
+                  className="CalculatePage_Btn0"
+                  color="grey"
+                  content="Formato"
+                />
+                <Select
+                  button
+                  defaultValue="d"
+                  onChange={(e, { value }) => setFormat(value)}
+                  options={[
+                    { key: 'd', value: 'd', text: 'Decimal' },
+                    { key: 'a', value: 'a', text: 'Americano' },
+                    { key: 'f', value: 'f', text: 'Fraccion' },
+                  ]}
+                />
+              </Button.Group>
+
+              <br className="CalculatePage_PcHide" />
+
+              <Button.Group
+                vertical={checkMobile() || checkTablet()}
+                style={{ paddingTop: '5%' }}
+              >
+                <Button
+                  className="CalculatePage_Btn0"
+                  color="grey"
+                  content="Apuesta"
+                />
+                <Button style={{ backgroundColor: 'white' }}>
+                  <Input
+                    transparent
                     type="number"
                     value={bet}
                     onChange={e => setBet(e.target.value)}
                   />
-                </Form>
-              </Grid.Column>
+                </Button>
+              </Button.Group>
+            </Grid.Column>
 
-              {/* aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa */}
-              <GridColumn width={11}>
-                <Grid textAlign="center">
-                  <Grid.Row>
-                    <Grid.Column width={4}>
-                      <Button.Group vertical>
-                        <Button color="blue" content="Monto Apostado" />
-                        <Button
-                          basic
-                          color="blue"
-                          icon="dollar"
-                          content={bet === '' ? '0' : bet}
-                        />
-                      </Button.Group>
-                    </Grid.Column>
-                    <Grid.Column width={4}>
-                      <Button.Group vertical>
-                        <Button color="yellow" content="Ganancia Total" />
-                        <Button
-                          basic
-                          color="yellow"
-                          icon="dollar"
-                          content={stats.ganancia === '' ? '0' : stats.ganancia}
-                        />
-                      </Button.Group>
-                    </Grid.Column>
-                    <Grid.Column width={4}>
-                      <Button.Group vertical>
-                        <Button color="green" content="Total a Cobrar" />
-                        <Button
-                          basic
-                          color="green"
-                          icon="dollar"
-                          content={stats.total}
-                        />
-                      </Button.Group>
-                    </Grid.Column>
-                  </Grid.Row>
-                </Grid>
+            {/* |==>| */}
+            <GridColumn computer={11} mobile={16}>
+              {/* ↑ */}
+              <Divider className="CalculatePage_PcHide" />
+              <Grid textAlign="center">
+                <Grid.Row>
+                  <Grid.Column computer={4} mobile={16}>
+                    <Button.Group vertical={!checkMobile()}>
+                      <Button
+                        color="blue"
+                        content="Monto Apostado"
+                        style={{ width: '150px' }}
+                      />
+                      <Button
+                        basic
+                        color="blue"
+                        icon="dollar"
+                        content={bet === '' ? '0' : bet}
+                      />
+                    </Button.Group>
+                  </Grid.Column>
 
-                <Divider />
+                  <Grid.Column computer={4} mobile={16}>
+                    <Button.Group vertical={!checkMobile()}>
+                      <Button
+                        color="yellow"
+                        content="Ganancia Total"
+                        style={{ width: '150px' }}
+                      />
+                      <Button
+                        basic
+                        color="yellow"
+                        icon="dollar"
+                        content={stats.ganancia === '' ? '0' : stats.ganancia}
+                      />
+                    </Button.Group>
+                  </Grid.Column>
 
-                <Grid textAlign="center">
-                  <Grid.Row>
-                    <Grid.Column width={5}>
-                      <Button.Group vertical>
-                        <Button color="brown" content="Cuota Total Decimal" />
-                        <Button
-                          basic
-                          color="orange"
-                          content={stats.dec === '' ? '0' : stats.dec}
-                        />
-                      </Button.Group>
-                    </Grid.Column>
-                    <Grid.Column width={5}>
-                      <Button.Group vertical>
-                        <Button color="brown" content="Cuota Total Americano" />
-                        <Button basic color="orange" content={stats.ame} />
-                      </Button.Group>
-                    </Grid.Column>
-                    <Grid.Column width={5}>
-                      <Button.Group vertical>
-                        <Button
-                          color="brown"
-                          content="Cuota Total Fraccionado"
-                        />
-                        <Button
-                          basic
-                          color="orange"
-                          content={stats.fra === '' ? '0/0' : stats.fra}
-                        />
-                      </Button.Group>
-                    </Grid.Column>
-                  </Grid.Row>
-                </Grid>
-              </GridColumn>
-            </Grid.Row>
+                  <Grid.Column computer={4} mobile={16}>
+                    <Button.Group vertical={!checkMobile()}>
+                      <Button
+                        color="green"
+                        content="Total a Cobrar"
+                        style={{ width: '150px' }}
+                      />
+                      <Button
+                        basic
+                        color="green"
+                        icon="dollar"
+                        content={stats.total}
+                      />
+                    </Button.Group>
+                  </Grid.Column>
+                </Grid.Row>
+              </Grid>
+
+              <Divider />
+
+              {/* ↓ */}
+              <Grid>
+                <Grid.Row>
+                  <Grid.Column width={5}>
+                    <Button.Group vertical>
+                      <Button
+                        className="CalculatePage_Btn1"
+                        color="brown"
+                        content={
+                          checkMobile() ? 'Decimal' : 'Cuota Total Decimal'
+                        }
+                      />
+                      <Button
+                        basic
+                        color="orange"
+                        content={stats.dec === '' ? '0' : stats.dec}
+                      />
+                    </Button.Group>
+                  </Grid.Column>
+
+                  <Grid.Column width={5}>
+                    <Button.Group vertical>
+                      <Button
+                        className="CalculatePage_Btn1"
+                        color="brown"
+                        content={
+                          checkMobile() ? 'Americano' : 'Cuota Total Americano'
+                        }
+                      />
+                      <Button basic color="orange" content={stats.ame} />
+                    </Button.Group>
+                  </Grid.Column>
+
+                  <Grid.Column width={5}>
+                    <Button.Group vertical>
+                      <Button
+                        className="CalculatePage_Btn1"
+                        color="brown"
+                        content={
+                          checkMobile() ? 'Fraccion' : 'Cuota Total Fraccionado'
+                        }
+                      />
+                      <Button
+                        basic
+                        color="orange"
+                        content={stats.fra === '' ? '0/0' : stats.fra}
+                      />
+                    </Button.Group>
+                  </Grid.Column>
+                </Grid.Row>
+              </Grid>
+            </GridColumn>
           </Grid>
         </Segment>
 
+        {/* ↓↓↓↓↓ */}
         <Grid>
           <Grid.Row>
             <GridColumn>
               <Table striped>
-                <Table.Header>
+                {/* ↑ */}
+                <Table.Header className="CalculatePage_MobileHide">
                   <Table.Row textAlign="center">
                     <Table.Cell active width={2} content="ID" />
                     <Table.Cell active width={5} content="Cuota" />
@@ -388,6 +458,8 @@ export default function CalculatePage() {
                     />
                   </Table.Row>
                 </Table.Header>
+
+                {/* ↓ */}
                 <Table.Body>
                   {quotes.map(row => (
                     <Table.Row textAlign="center" key={row.id}>
@@ -395,14 +467,78 @@ export default function CalculatePage() {
                       <Table.Cell
                         content={
                           <Input
+                            type={format === 'f' ? 'text' : 'number'}
                             value={row.logro}
                             onChange={e => editQuote(row.id, e.target.value)}
                           />
                         }
                       />
-                      <Table.Cell content={row.decimal} />
-                      <Table.Cell content={row.americano} />
-                      <Table.Cell content={row.fraccionario} />
+                      <Table.Cell
+                        content={
+                          checkMobile() ? (
+                            <Button.Group>
+                              <Button
+                                className="CalculatePage_Btn2"
+                                color="instagram"
+                                content="Decimal"
+                              />
+                              <Button
+                                className="CalculatePage_Btn3"
+                                basic
+                                compact
+                                color="blue"
+                                content={row.decimal}
+                              />
+                            </Button.Group>
+                          ) : (
+                            row.decimal
+                          )
+                        }
+                      />
+                      <Table.Cell
+                        content={
+                          checkMobile() ? (
+                            <Button.Group>
+                              <Button
+                                className="CalculatePage_Btn2"
+                                color="instagram"
+                                content="Americano"
+                              />
+                              <Button
+                                className="CalculatePage_Btn3"
+                                basic
+                                compact
+                                color="blue"
+                                content={row.americano}
+                              />
+                            </Button.Group>
+                          ) : (
+                            row.americano
+                          )
+                        }
+                      />
+                      <Table.Cell
+                        content={
+                          checkMobile() ? (
+                            <Button.Group>
+                              <Button
+                                className="CalculatePage_Btn2"
+                                color="instagram"
+                                content="Fraccion"
+                              />
+                              <Button
+                                className="CalculatePage_Btn3"
+                                basic
+                                compact
+                                color="blue"
+                                content={row.fraccionario}
+                              />
+                            </Button.Group>
+                          ) : (
+                            row.fraccionario
+                          )
+                        }
+                      />
                       <Table.Cell
                         content={
                           <Button
@@ -425,6 +561,14 @@ export default function CalculatePage() {
                   ))}
                 </Table.Body>
               </Table>
+
+              <Button
+                className="CalculatePage_PcHide"
+                primary
+                circular
+                icon="plus"
+                onClick={addQuote}
+              />
             </GridColumn>
           </Grid.Row>
         </Grid>

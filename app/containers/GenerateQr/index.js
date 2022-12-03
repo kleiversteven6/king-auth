@@ -14,6 +14,7 @@ export default function GenerateQr() {
   };
   return (
     <Container>
+      <h1>Generar codigo Qr</h1>
       <Card color="blue" centered>
         <Image src={Response.url} wrapped ui={false} />
         <Card.Content>

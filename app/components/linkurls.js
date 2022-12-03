@@ -67,12 +67,13 @@ export default function LinkUrls({ websites, deletesite }) {
               <Table.Cell>
                 <Button.Group>
                   <NavLink to={`/graficas/${row.id}`}>
-                    <Button icon="chart bar outline" color="violet" />
+                    <Button icon="chart bar outline" basic color="violet" />
                   </NavLink>
 
                   <Button
                     icon="share alternate"
                     color="green"
+                    basic
                     onClick={() => {
                       setLinkUrl(row);
                       setVisible(true);
@@ -80,6 +81,7 @@ export default function LinkUrls({ websites, deletesite }) {
                   />
                   <Button
                     icon="trash"
+                    basic
                     onClick={() => deletesite(row.id)}
                     color="red"
                   />
@@ -87,6 +89,7 @@ export default function LinkUrls({ websites, deletesite }) {
                   <Button
                     icon="pencil"
                     color="teal"
+                    basic
                     onClick={() => {
                       setLinkUrl(row);
                       setOpen(true);
