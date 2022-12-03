@@ -1,4 +1,5 @@
 import { createGlobalStyle } from 'styled-components';
+import './containers/Bingo/Bingo.css';
 import 'semantic-ui-css/semantic.min.css';
 
 const GlobalStyle = createGlobalStyle`
