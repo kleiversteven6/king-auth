@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Button, Grid, GridColumn, GridRow, Table } from 'semantic-ui-react';
 
 import logo from '../../public/assets/logoking.png';
-import Ball from './Ball';
 let bingo = [];
 export default function Mesa() {
   const carton = [
@@ -141,10 +140,7 @@ export default function Mesa() {
               </Table.Body>
             </Table>
           </GridColumn>
-          <GridColumn width={4}>
-            <Ball num="01" />
-            <Ball num="74" />
-          </GridColumn>
+          <GridColumn width={4} />
         </GridRow>
       </Grid>
     </>
